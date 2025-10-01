@@ -11,6 +11,8 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import io.github.dovecoteescapee.byedpi.R
 import io.github.dovecoteescapee.byedpi.activities.MainActivity
+import io.github.dovecoteescapee.byedpi.data.PAUSE_ACTION
+import io.github.dovecoteescapee.byedpi.data.START_ACTION
 import io.github.dovecoteescapee.byedpi.data.STOP_ACTION
 
 fun registerNotificationChannel(context: Context, id: String, @StringRes name: Int) {
@@ -36,26 +38,40 @@ fun createConnectionNotification(
     @StringRes title: Int,
     @StringRes content: Int,
     service: Class<*>,
+    paused: Boolean,
 ): Notification =
     NotificationCompat.Builder(context, channelId)
         .setSmallIcon(R.drawable.ic_notification)
         .setSilent(true)
-            .setContentTitle(context.getString(title))
-            .setContentText(context.getString(content))
-            .addAction(0, "Stop",
-                PendingIntent.getService(
-                    context,
-                    0,
-                    Intent(context, service).setAction(STOP_ACTION),
-                    PendingIntent.FLAG_IMMUTABLE,
-                )
+        .setContentTitle(context.getString(title))
+        .setContentText(context.getString(content))
+        .addAction(
+            0, "Stop",
+            PendingIntent.getService(
+                context,
+                0,
+                Intent(context, service).setAction(STOP_ACTION),
+                PendingIntent.FLAG_IMMUTABLE,
             )
-            .setContentIntent(
-                PendingIntent.getActivity(
+        )
+        .addAction(
+            1, if (paused) "Continue" else "Pause",
+            PendingIntent.getService(
+                context,
+                0,
+                Intent(
                     context,
-                    0,
-                    Intent(context, MainActivity::class.java),
-                    PendingIntent.FLAG_IMMUTABLE,
-                )
+                    service
+                ).setAction(if (paused) START_ACTION else PAUSE_ACTION),
+                PendingIntent.FLAG_IMMUTABLE,
             )
+        )
+        .setContentIntent(
+            PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE,
+            )
+        )
         .build()

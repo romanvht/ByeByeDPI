@@ -56,6 +56,11 @@ class ByeDpiProxyService : LifecycleService() {
                 START_NOT_STICKY
             }
 
+            PAUSE_ACTION -> {
+                lifecycleScope.launch { stop(true) }
+                START_STICKY
+            }
+
             else -> {
                 Log.w(TAG, "Unknown action: $action")
                 START_NOT_STICKY
@@ -72,7 +77,7 @@ class ByeDpiProxyService : LifecycleService() {
         }
 
         try {
-            startForeground()
+            startForeground(false)
             mutex.withLock {
                 startProxy()
             }
@@ -84,8 +89,8 @@ class ByeDpiProxyService : LifecycleService() {
         }
     }
 
-    private fun startForeground() {
-        val notification: Notification = createNotification()
+    private fun startForeground(paused: Boolean) {
+        val notification: Notification = createNotification(paused)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(
                 FOREGROUND_SERVICE_ID,
@@ -97,17 +102,26 @@ class ByeDpiProxyService : LifecycleService() {
         }
     }
 
-    private suspend fun stop() {
+    private suspend fun stop(pause: Boolean = false) {
         Log.i(TAG, "Stopping")
 
-        mutex.withLock {
-            withContext(Dispatchers.IO) {
-                stopProxy()
+        if (status == ServiceStatus.Disconnected) {
+            Log.w(TAG, "Proxy already diconnected")
+        } else {
+            mutex.withLock {
+                withContext(Dispatchers.IO) {
+                    stopProxy()
+                }
             }
+
+            updateStatus(ServiceStatus.Disconnected)
         }
 
-        updateStatus(ServiceStatus.Disconnected)
-        stopSelf()
+        if (pause) {
+            startForeground(true)
+        } else {
+            stopSelf()
+        }
     }
 
     private fun startProxy() {
@@ -199,12 +213,13 @@ class ByeDpiProxyService : LifecycleService() {
         sendBroadcast(intent)
     }
 
-    private fun createNotification(): Notification =
+    private fun createNotification(paused: Boolean): Notification =
         createConnectionNotification(
             this,
             NOTIFICATION_CHANNEL_ID,
             R.string.notification_title,
             R.string.proxy_notification_content,
             ByeDpiProxyService::class.java,
+            paused,
         )
 }

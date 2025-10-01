@@ -61,6 +61,11 @@ class ByeDpiVpnService : LifecycleVpnService() {
                 START_NOT_STICKY
             }
 
+            PAUSE_ACTION -> {
+                lifecycleScope.launch { stop(true) }
+                START_STICKY
+            }
+
             else -> {
                 Log.w(TAG, "Unknown action: $action")
                 START_NOT_STICKY
@@ -82,7 +87,7 @@ class ByeDpiVpnService : LifecycleVpnService() {
         }
 
         try {
-            startForeground()
+            startForeground(false)
             mutex.withLock {
                 startProxy()
                 startTun2Socks()
@@ -95,8 +100,8 @@ class ByeDpiVpnService : LifecycleVpnService() {
         }
     }
 
-    private fun startForeground() {
-        val notification: Notification = createNotification()
+    private fun startForeground(paused: Boolean) {
+        val notification: Notification = createNotification(paused)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(
                 FOREGROUND_SERVICE_ID,
@@ -108,22 +113,31 @@ class ByeDpiVpnService : LifecycleVpnService() {
         }
     }
 
-    private suspend fun stop() {
+    private suspend fun stop(pause: Boolean = false) {
         Log.i(TAG, "Stopping")
 
-        mutex.withLock {
-            try {
-                withContext(Dispatchers.IO) {
-                    stopProxy()
-                    stopTun2Socks()
+        if (status == ServiceStatus.Disconnected) {
+            Log.w(TAG, "VPN already diconnected")
+        } else {
+            mutex.withLock {
+                try {
+                    withContext(Dispatchers.IO) {
+                        stopProxy()
+                        stopTun2Socks()
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to stop VPN", e)
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to stop VPN", e)
             }
+
+            updateStatus(ServiceStatus.Disconnected)
         }
 
-        updateStatus(ServiceStatus.Disconnected)
-        stopSelf()
+        if (pause) {
+            startForeground(true)
+        } else {
+            stopSelf()
+        }
     }
 
     private fun startProxy() {
@@ -286,13 +300,14 @@ class ByeDpiVpnService : LifecycleVpnService() {
         sendBroadcast(intent)
     }
 
-    private fun createNotification(): Notification =
+    private fun createNotification(paused: Boolean): Notification =
         createConnectionNotification(
             this,
             NOTIFICATION_CHANNEL_ID,
             R.string.notification_title,
             R.string.vpn_notification_content,
             ByeDpiVpnService::class.java,
+            paused,
         )
 
     private fun createBuilder(dns: String, ipv6: Boolean): Builder {
