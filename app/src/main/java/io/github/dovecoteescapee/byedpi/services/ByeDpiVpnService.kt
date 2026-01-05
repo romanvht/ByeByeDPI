@@ -3,10 +3,12 @@ package io.github.dovecoteescapee.byedpi.services
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.ParcelFileDescriptor
+import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import io.github.dovecoteescapee.byedpi.R
@@ -316,6 +318,7 @@ class ByeDpiVpnService : LifecycleVpnService() {
         )
         intent.putExtra(SENDER, Sender.VPN.ordinal)
         sendBroadcast(intent)
+        updateQuickSettingsTile()
     }
 
     private fun createNotification(): Notification =
@@ -338,6 +341,13 @@ class ByeDpiVpnService : LifecycleVpnService() {
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(PAUSE_NOTIFICATION_ID, notification)
+    }
+
+    private fun updateQuickSettingsTile() {
+        TileService.requestListeningState(
+            this,
+            ComponentName(this, QuickTileService::class.java)
+        )
     }
 
     private fun createBuilder(dns: String, ipv6: Boolean): Builder {

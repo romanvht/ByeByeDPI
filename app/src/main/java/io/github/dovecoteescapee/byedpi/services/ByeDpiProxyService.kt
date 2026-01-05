@@ -2,9 +2,11 @@ package io.github.dovecoteescapee.byedpi.services
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
 import android.os.Build
+import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -221,6 +223,7 @@ class ByeDpiProxyService : LifecycleService() {
         )
         intent.putExtra(SENDER, Sender.Proxy.ordinal)
         sendBroadcast(intent)
+        updateQuickSettingsTile()
     }
 
     private fun createNotification(): Notification =
@@ -244,4 +247,12 @@ class ByeDpiProxyService : LifecycleService() {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(PAUSE_NOTIFICATION_ID, notification)
     }
+
+    private fun updateQuickSettingsTile() {
+        TileService.requestListeningState(
+            this,
+            ComponentName(this, QuickTileService::class.java)
+        )
+    }
+
 }
