@@ -37,7 +37,7 @@
             android:defaultValue="8.8.8.8"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreference
+        <androidx.preference.SwitchPreferenceCompat
             android:key="ipv6_enable"
             android:title="@string/ipv6_setting"
             android:defaultValue="false" />
@@ -60,12 +60,12 @@
     <androidx.preference.PreferenceCategory
         android:title="@string/automation">
 
-        <SwitchPreference
+        <androidx.preference.SwitchPreferenceCompat
             android:key="autostart"
             android:title="@string/autostart_settings"
             android:defaultValue="false" />
 
-        <SwitchPreference
+        <androidx.preference.SwitchPreferenceCompat
             android:key="auto_connect"
             android:title="@string/autoconnect_settings"
             android:defaultValue="false" />
@@ -75,7 +75,7 @@
     <androidx.preference.PreferenceCategory
         android:title="@string/byedpi_category">
 
-        <SwitchPreference
+        <androidx.preference.SwitchPreferenceCompat
             android:key="byedpi_enable_cmd_settings"
             android:title="@string/use_command_line_settings"
             android:defaultValue="false" />
@@ -116,7 +116,7 @@
             android:defaultValue="1080"
             app:useSimpleSummaryProvider="true" />
 
-        <SwitchPreference
+        <androidx.preference.SwitchPreferenceCompat
             android:key="byedpi_http_connect"
             android:title="@string/byedpi_http_connect_setting"
             android:defaultValue="false"

@@ -30,11 +30,11 @@
         android:defaultValue="google.com"
         app:useSimpleSummaryProvider="true" />
 
-    <SwitchPreference
+    <androidx.preference.SwitchPreferenceCompat
         android:key="byedpi_proxytest_fulllog"
         android:title="@string/test_settings_fulllog" />
 
-    <SwitchPreference
+    <androidx.preference.SwitchPreferenceCompat
         android:key="byedpi_proxytest_logclickable"
         android:title="@string/test_settings_logclickable" />
 
@@ -53,7 +53,7 @@
         android:inputType="textMultiLine"
         app:useSimpleSummaryProvider="true" />
 
-    <SwitchPreference
+    <androidx.preference.SwitchPreferenceCompat
         android:key="byedpi_proxytest_usercommands"
         android:title="@string/test_settings_usercommands" />
 

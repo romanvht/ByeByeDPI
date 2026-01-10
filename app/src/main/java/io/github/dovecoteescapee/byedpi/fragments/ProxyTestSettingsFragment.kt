@@ -52,7 +52,7 @@ class ProxyTestSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updatePreferences() {
-        val switchUserCommands = findPreferenceNotNull<SwitchPreference>("byedpi_proxytest_usercommands")
+        val switchUserCommands = findPreferenceNotNull<SwitchPreferenceCompat>("byedpi_proxytest_usercommands")
         val textUserDomains = findPreferenceNotNull<EditTextPreference>("byedpi_proxytest_domains")
         val textUserCommands = findPreferenceNotNull<EditTextPreference>("byedpi_proxytest_commands")
         val domainLists = findPreferenceNotNull<MultiSelectListPreference>("byedpi_proxytest_domain_lists")

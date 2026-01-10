@@ -9,6 +9,7 @@
         <item name="colorOnSecondary">#FFFFFF</item>
 
         <item name="android:statusBarColor">#3C52A3</item>
+        <item name="preferenceTheme">@style/ThemeOverlay.App.Preference</item>
     </style>
 
     <style name="Theme.ByeDPI.History.PaddingLeft" parent="Theme.ByeDPI">
@@ -17,5 +18,13 @@
 
     <style name="Theme.ByeDPI.History.NoPaddingLeft" parent="Theme.ByeDPI">
         <item name="history_pref_icon_space">16dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Preference" parent="PreferenceThemeOverlay">
+        <item name="switchPreferenceCompatStyle">@style/App.Preference.SwitchPreference</item>
+    </style>
+
+    <style name="App.Preference.SwitchPreference" parent="Preference.SwitchPreference.Material">
+        <item name="android:widgetLayout">@layout/preference_material_switch</item>
     </style>
 </resources>

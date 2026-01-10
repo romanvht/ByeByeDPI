@@ -161,10 +161,10 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updatePreferences() {
-        val cmdEnable = findPreferenceNotNull<SwitchPreference>("byedpi_enable_cmd_settings").isChecked
+        val cmdEnable = findPreferenceNotNull<SwitchPreferenceCompat>("byedpi_enable_cmd_settings").isChecked
         val mode = findPreferenceNotNull<ListPreference>("byedpi_mode").value.let { Mode.fromString(it) }
         val dns = findPreferenceNotNull<EditTextPreference>("dns_ip")
-        val ipv6 = findPreferenceNotNull<SwitchPreference>("ipv6_enable")
+        val ipv6 = findPreferenceNotNull<SwitchPreferenceCompat>("ipv6_enable")
         val proxy = findPreferenceNotNull<PreferenceCategory>("byedpi_proxy_category")
 
         val applistType = findPreferenceNotNull<ListPreference>("applist_type")

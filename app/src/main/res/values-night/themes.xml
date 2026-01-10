@@ -9,6 +9,7 @@
         <item name="colorOnSecondary">#FFFFFF</item>
 
         <item name="android:statusBarColor">#000000</item>
+        <item name="preferenceTheme">@style/ThemeOverlay.App.Preference</item>
     </style>
 
     <style name="Theme.ByeDPI.History.PaddingLeft" parent="Theme.ByeDPI">

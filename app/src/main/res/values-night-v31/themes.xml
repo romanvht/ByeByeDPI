@@ -18,6 +18,7 @@
         <item name="android:textAppearanceListItem">@style/TextPrimary</item>
         <item name="android:textAppearanceListItemSecondary">@style/TextSummary</item>
         <item name="android:textAppearanceListItemSmall">@style/TextSummary</item>
+        <item name="preferenceTheme">@style/ThemeOverlay.App.Preference</item>
     </style>
 
     <style name="Theme.ByeDPI.History.PaddingLeft" parent="Theme.ByeDPI">
