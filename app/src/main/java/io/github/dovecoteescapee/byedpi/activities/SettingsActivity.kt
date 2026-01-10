@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.gson.Gson
 import io.github.dovecoteescapee.byedpi.BuildConfig
 import io.github.dovecoteescapee.byedpi.R
+import io.github.dovecoteescapee.byedpi.data.AppsCache
 import io.github.dovecoteescapee.byedpi.data.AppSettings
 import io.github.dovecoteescapee.byedpi.fragments.ByeDpiCommandLineSettingsFragment
 import io.github.dovecoteescapee.byedpi.fragments.ByeDpiUISettingsFragment
@@ -16,6 +17,9 @@ import io.github.dovecoteescapee.byedpi.utility.HistoryUtils
 import io.github.dovecoteescapee.byedpi.utility.getPreferences
 import io.github.dovecoteescapee.byedpi.utility.getSelectedApps
 import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
 
@@ -46,7 +50,11 @@ class SettingsActivity : BaseActivity() {
             }
         }
 
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppsCache.preloadApps(this@SettingsActivity)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
