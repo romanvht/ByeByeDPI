@@ -1,13 +1,10 @@
 package io.github.dovecoteescapee.byedpi.fragments
 
 import android.content.SharedPreferences
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -17,14 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.dovecoteescapee.byedpi.R
 import io.github.dovecoteescapee.byedpi.adapters.AppSelectionAdapter
 import io.github.dovecoteescapee.byedpi.data.AppInfo
-import kotlinx.coroutines.Dispatchers
+import io.github.dovecoteescapee.byedpi.data.AppsCache
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AppSelectionFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var searchView: SearchView
-    private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AppSelectionAdapter
     private lateinit var prefs: SharedPreferences
 
@@ -38,10 +33,11 @@ class AppSelectionFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         searchView = view.findViewById(R.id.searchView)
-        progressBar = view.findViewById(R.id.progressBar)
 
         setupRecyclerView()
         setupSearchView()
+
+        searchView.visibility = View.VISIBLE
 
         loadApps()
 
@@ -70,53 +66,23 @@ class AppSelectionFragment : Fragment() {
     }
 
     private fun loadApps() {
-        progressBar.visibility = View.VISIBLE
-
-        lifecycleScope.launch {
-            val apps = withContext(Dispatchers.IO) {
-                getInstalledApps()
-            }
-
-            adapter = AppSelectionAdapter(requireContext(), apps)
-            recyclerView.adapter = adapter
-            progressBar.visibility = View.GONE
-            searchView.visibility = View.VISIBLE
-        }
-    }
-
-    private fun getInstalledApps(): List<AppInfo> {
-        val pm = requireContext().packageManager
-        val installedApps = pm.getInstalledApplications(0)
         val selectedApps = prefs.getStringSet("selected_apps", setOf()) ?: setOf()
 
-        return installedApps
-            .filter { it.packageName != requireContext().packageName }
-            .map { createAppInfo(it, pm, selectedApps) }
-            .sortedWith(compareBy({ !it.isSelected }, { it.appName.lowercase() }))
+        lifecycleScope.launch {
+            val apps = AppsCache.loadApps(requireContext(), selectedApps)
+            updateAdapter(apps)
+        }
     }
 
-    private fun createAppInfo(
-        appInfo: ApplicationInfo,
-        pm: PackageManager,
-        selectedApps: Set<String>
-    ): AppInfo {
-        val appName = try {
-            pm.getApplicationLabel(appInfo).toString()
-        } catch (_: Exception) {
-            appInfo.packageName
-        }
+    private fun updateAdapter(apps: List<AppInfo>) {
+        val sortedApps = apps.sortedWith(compareBy({ !it.isSelected }, { it.appName.lowercase() }))
 
-        val appIcon = try {
-            pm.getApplicationIcon(appInfo.packageName)
-        } catch (_: Exception) {
-            pm.defaultActivityIcon
+        if (::adapter.isInitialized) {
+            adapter = AppSelectionAdapter(requireContext(), sortedApps)
+            recyclerView.adapter = adapter
+        } else {
+            adapter = AppSelectionAdapter(requireContext(), sortedApps)
+            recyclerView.adapter = adapter
         }
-
-        return AppInfo(
-            appName,
-            appInfo.packageName,
-            appIcon,
-            selectedApps.contains(appInfo.packageName)
-        )
     }
 }
