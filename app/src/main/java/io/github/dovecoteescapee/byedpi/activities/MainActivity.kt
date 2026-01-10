@@ -174,6 +174,10 @@ class MainActivity : BaseActivity() {
         }
 
         ShortcutUtils.update(this)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppsCache.preloadApps(this@MainActivity)
+        }
     }
 
     override fun onResume() {
