@@ -2,6 +2,7 @@ package io.github.romanvht.byedpi.services
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
 import android.os.Build
@@ -135,7 +136,11 @@ class ByeDpiProxyService : LifecycleService() {
             updateStatus(ServiceStatus.Disconnected)
         }
 
-        stopSelf()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            stopForeground(Service.STOP_FOREGROUND_REMOVE)
+        } else {
+            stopSelf()
+        }
     }
 
     private fun startProxy() {
@@ -160,7 +165,11 @@ class ByeDpiProxyService : LifecycleService() {
                 updateStatus(ServiceStatus.Disconnected)
             }
 
-            stopSelf()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                stopForeground(Service.STOP_FOREGROUND_REMOVE)
+            } else {
+                stopSelf()
+            }
         }
 
         Log.i(TAG, "Proxy started")

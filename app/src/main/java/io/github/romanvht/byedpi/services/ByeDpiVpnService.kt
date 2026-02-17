@@ -3,6 +3,7 @@ package io.github.romanvht.byedpi.services
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
@@ -158,7 +159,11 @@ class ByeDpiVpnService : LifecycleVpnService() {
             updateStatus(ServiceStatus.Disconnected)
         }
 
-        stopSelf()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            stopForeground(Service.STOP_FOREGROUND_REMOVE)
+        } else {
+            stopSelf()
+        }
     }
 
     private fun startProxy() {
@@ -183,7 +188,11 @@ class ByeDpiVpnService : LifecycleVpnService() {
             }
 
             stopTun2Socks()
-            stopSelf()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                stopForeground(Service.STOP_FOREGROUND_REMOVE)
+            } else {
+                stopSelf()
+            }
         }
 
         Log.i(TAG, "Proxy started")
