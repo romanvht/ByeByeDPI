@@ -198,6 +198,16 @@
     <string name="dns_google">Google</string>
     <string name="dns_cloudflare">Cloudflare</string>
     <string name="dns_quad9">Quad9</string>
+    <string name="dns_yandex">Яндекс</string>
+    <string name="private_dns">Частный DNS</string>
+    <string name="private_dns_settings_message">Частный DNS задан в системе. Изменить его можно в настройках сети.</string>
+    <string name="private_dns_settings_unavailable">Не удалось открыть настройки сети</string>
+    <string name="private_dns_inactive">не активен</string>
+    <string name="private_dns_unknown">не удалось определить</string>
+    <string name="private_dns_unsupported">не поддерживается</string>
+    <string name="diagnostic_vpn_permission">Разрешение на VPN</string>
+    <string name="diagnostic_vpn_allowed">предоставлено</string>
+    <string name="diagnostic_vpn_denied">не разрешено</string>
     <string name="dns_custom">Свой</string>
     <string name="main_strategy_picker">Сменить стратегию</string>
     <string name="main_strategy_no_pinned">Закрепите нужные стратегии в редакторе</string>

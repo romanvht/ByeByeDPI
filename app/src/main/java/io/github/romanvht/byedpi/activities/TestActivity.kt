@@ -1,19 +1,20 @@
 package io.github.romanvht.byedpi.activities
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.VpnService
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.adapters.StrategyResultAdapter
 import io.github.romanvht.byedpi.data.Mode
@@ -42,7 +43,7 @@ class TestActivity : BaseActivity() {
     private lateinit var strategiesRecyclerView: RecyclerView
     private lateinit var progressTextView: TextView
     private lateinit var disclaimerTextView: TextView
-    private lateinit var startStopButton: Button
+    private lateinit var startStopButton: MaterialButton
     private lateinit var strategyAdapter: StrategyResultAdapter
 
     private lateinit var siteChecker: SiteCheckUtils
@@ -119,6 +120,15 @@ class TestActivity : BaseActivity() {
             }
 
             startStopButton.postDelayed({ startStopButton.isClickable = true }, 1000)
+        }
+
+        startStopButton.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                startStopButton.strokeWidth = 10
+                startStopButton.strokeColor = ColorStateList.valueOf(android.graphics.Color.argb(100, 0, 0, 0))
+            } else {
+                startStopButton.strokeWidth = 0
+            }
         }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {

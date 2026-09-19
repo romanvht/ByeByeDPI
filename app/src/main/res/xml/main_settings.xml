@@ -39,6 +39,13 @@
             android:icon="@drawable/ic_dns"
             android:title="@string/dbs_ip_setting" />
 
+        <Preference
+            android:key="private_dns"
+            android:icon="@drawable/ic_dns"
+            android:title="@string/private_dns"
+            android:persistent="false"
+            app:isPreferenceVisible="false" />
+
         <EditTextPreference
             android:key="dns_ip"
             android:title="@string/dbs_ip_setting"

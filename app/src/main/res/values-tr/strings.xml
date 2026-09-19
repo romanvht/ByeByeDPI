@@ -198,6 +198,16 @@
     <string name="dns_google">Google</string>
     <string name="dns_cloudflare">Cloudflare</string>
     <string name="dns_quad9">Quad9</string>
+    <string name="dns_yandex">Yandex</string>
+    <string name="private_dns">Özel DNS</string>
+    <string name="private_dns_settings_message">Özel DNS sistemde ayarlanmış. Ağ ayarlarından değiştirebilirsiniz.</string>
+    <string name="private_dns_settings_unavailable">Ağ ayarları açılamadı</string>
+    <string name="private_dns_inactive">etkin değil</string>
+    <string name="private_dns_unknown">belirlenemedi</string>
+    <string name="private_dns_unsupported">desteklenmiyor</string>
+    <string name="diagnostic_vpn_permission">VPN izni</string>
+    <string name="diagnostic_vpn_allowed">verildi</string>
+    <string name="diagnostic_vpn_denied">izin verilmedi</string>
     <string name="dns_custom">Özel</string>
     <string name="main_strategy_picker">Ayarları değiştir</string>
     <string name="main_strategy_no_pinned">İhtiyacınız olan stratejileri düzenleyicide sabitleyin</string>

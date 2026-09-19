@@ -199,6 +199,16 @@
     <string name="dns_google">Google</string>
     <string name="dns_cloudflare">Cloudflare</string>
     <string name="dns_quad9">Quad9</string>
+    <string name="dns_yandex">Yandex</string>
+    <string name="private_dns">DNS riêng tư</string>
+    <string name="private_dns_settings_message">DNS riêng tư được đặt trong hệ thống. Bạn có thể thay đổi trong cài đặt mạng.</string>
+    <string name="private_dns_settings_unavailable">Không thể mở cài đặt mạng</string>
+    <string name="private_dns_inactive">không hoạt động</string>
+    <string name="private_dns_unknown">không xác định được</string>
+    <string name="private_dns_unsupported">không được hỗ trợ</string>
+    <string name="diagnostic_vpn_permission">Quyền VPN</string>
+    <string name="diagnostic_vpn_allowed">đã cấp</string>
+    <string name="diagnostic_vpn_denied">không được phép</string>
     <string name="dns_custom">Tùy chỉnh</string>
     <string name="main_strategy_picker">Thay đổi cài đặt</string>
     <string name="main_strategy_no_pinned">Ghim các chiến lược bạn cần trong trình chỉnh sửa</string>

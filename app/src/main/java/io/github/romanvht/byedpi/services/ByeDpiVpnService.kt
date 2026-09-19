@@ -249,7 +249,11 @@ class ByeDpiVpnService : LifecycleVpnService() {
         val sharedPreferences = getPreferences()
         val (ip, port) = sharedPreferences.getProxyIpAndPort()
 
-        val dns = sharedPreferences.getStringNotNull("dns_ip", "1.1.1.1")
+        val dns = if (PrivateDnsUtils.getState(this) is PrivateDnsState.Configured) {
+            ""
+        } else {
+            sharedPreferences.getStringNotNull("dns_ip", "1.1.1.1")
+        }
         val ipv6 = sharedPreferences.getBoolean("ipv6_enable", false)
 
         val tun2socksConfig = buildString {

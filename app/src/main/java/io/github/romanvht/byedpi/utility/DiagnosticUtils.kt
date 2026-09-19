@@ -7,11 +7,13 @@ import io.github.romanvht.byedpi.BuildConfig
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.core.ByeDpiProxyUIPreferences
 import io.github.romanvht.byedpi.data.Mode
+import io.github.romanvht.byedpi.data.PrivateDnsState
 
 object DiagnosticUtils {
     fun buildReport(context: Context): String {
         val preferences = context.getPreferences()
         val mode = preferences.mode()
+        val privateDnsState = PrivateDnsUtils.getState(context)
         val cmdEnabled = preferences.getCmdEnable()
         val strategy = if (cmdEnabled) {
             preferences.getCmdArgs()
@@ -41,13 +43,16 @@ object DiagnosticUtils {
             appendLine(value(context, R.string.diagnostic_command_line, state(context, cmdEnabled)))
             appendLine(value(context, R.string.diagnostic_strategy, strategy))
             appendLine(value(context, R.string.mode_setting, modeName(context, mode)))
+            appendLine(value(context, R.string.private_dns, privateDnsDescription(context, privateDnsState)))
             if (mode == Mode.VPN) {
-                val dns = preferences.getStringNotNull("dns_ip", "1.1.1.1").ifBlank { context.getString(R.string.dns_system) }
-                appendLine(value(
-                    context,
-                    R.string.dbs_ip_setting,
-                    dns
-                ))
+                if (privateDnsState !is PrivateDnsState.Configured) {
+                    val dns = preferences.getStringNotNull("dns_ip", "1.1.1.1").ifBlank { context.getString(R.string.dns_system) }
+                    appendLine(value(
+                        context,
+                        R.string.dbs_ip_setting,
+                        dns
+                    ))
+                }
                 appendLine(value(
                     context,
                     R.string.ipv6_setting,
@@ -64,6 +69,14 @@ object DiagnosticUtils {
 
             appendLine()
             appendLine(context.getString(R.string.permission_category))
+            appendLine(value(
+                context,
+                R.string.diagnostic_vpn_permission,
+                context.getString(
+                    if (PermissionUtils.hasVpnPermission(context)) R.string.diagnostic_vpn_allowed
+                    else R.string.diagnostic_vpn_denied
+                )
+            ))
             appendLine(value(
                 context,
                 R.string.diagnostic_battery_exclusion,
@@ -115,6 +128,13 @@ object DiagnosticUtils {
         .filter { it.isNotBlank() }
         .distinctBy { it.lowercase() }
         .joinToString(" ")
+
+    private fun privateDnsDescription(context: Context, state: PrivateDnsState): String = when (state) {
+        is PrivateDnsState.Configured -> state.hostname
+        PrivateDnsState.Inactive -> context.getString(R.string.private_dns_inactive)
+        PrivateDnsState.Unknown -> context.getString(R.string.private_dns_unknown)
+        PrivateDnsState.Unsupported -> context.getString(R.string.private_dns_unsupported)
+    }
 
     private fun value(context: Context, label: Int, value: String): String =
         "${context.getString(label)}: $value"

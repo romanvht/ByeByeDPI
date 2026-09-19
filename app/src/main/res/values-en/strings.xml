@@ -198,6 +198,16 @@
     <string name="dns_google">Google</string>
     <string name="dns_cloudflare">Cloudflare</string>
     <string name="dns_quad9">Quad9</string>
+    <string name="dns_yandex">Yandex</string>
+    <string name="private_dns">Private DNS</string>
+    <string name="private_dns_settings_message">Private DNS is set in the system. You can change it in network settings.</string>
+    <string name="private_dns_settings_unavailable">Could not open network settings</string>
+    <string name="private_dns_inactive">inactive</string>
+    <string name="private_dns_unknown">could not determine</string>
+    <string name="private_dns_unsupported">not supported</string>
+    <string name="diagnostic_vpn_permission">VPN permission</string>
+    <string name="diagnostic_vpn_allowed">granted</string>
+    <string name="diagnostic_vpn_denied">not allowed</string>
     <string name="dns_custom">Custom</string>
     <string name="main_strategy_picker">Change strategy</string>
     <string name="main_strategy_no_pinned">Pin the strategies you need in the editor</string>

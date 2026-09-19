@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.VpnService
 import android.os.Build
 import android.os.Environment
 import android.os.PowerManager
@@ -41,6 +42,10 @@ object PermissionUtils {
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun hasVpnPermission(context: Context): Boolean {
+        return VpnService.prepare(context) == null
     }
 
     fun requestNotificationPermission(activity: Activity, requestCode: Int) {

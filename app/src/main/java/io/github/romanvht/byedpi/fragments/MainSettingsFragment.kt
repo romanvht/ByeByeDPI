@@ -11,6 +11,7 @@ import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.BuildConfig
 import io.github.romanvht.byedpi.activities.TestActivity
 import io.github.romanvht.byedpi.data.Mode
+import io.github.romanvht.byedpi.data.PrivateDnsState
 import io.github.romanvht.byedpi.utility.*
 import androidx.core.net.toUri
 
@@ -70,7 +71,18 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
 
         findPreferenceNotNull<Preference>("dns_ip_picker")
             .setOnPreferenceClickListener {
-                showDnsDialog()
+                if (PrivateDnsUtils.getState(requireContext()) is PrivateDnsState.Configured) {
+                    updatePreferences()
+                    PrivateDnsUtils.openSettings(requireContext())
+                } else {
+                    showDnsDialog()
+                }
+                true
+            }
+
+        findPreferenceNotNull<Preference>("private_dns")
+            .setOnPreferenceClickListener {
+                PrivateDnsUtils.openSettings(requireContext())
                 true
             }
 
@@ -96,6 +108,8 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         val mode = findPreferenceNotNull<ListPreference>("byedpi_mode").value.let { Mode.fromString(it) }
         val dns = findPreferenceNotNull<Preference>("dns_ip_picker")
         val dnsEdit = findPreferenceNotNull<EditTextPreference>("dns_ip")
+        val privateDns = findPreferenceNotNull<Preference>("private_dns")
+        val privateDnsState = PrivateDnsUtils.getState(requireContext())
         val ipv6 = findPreferenceNotNull<SwitchPreference>("ipv6_enable")
         val proxy = findPreferenceNotNull<PreferenceCategory>("byedpi_proxy_category")
 
@@ -121,10 +135,12 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
 
         dns.summary = dnsSummary()
         dnsEdit.isVisible = false
+        privateDns.summary = (privateDnsState as? PrivateDnsState.Configured)?.hostname
+        privateDns.isVisible = mode == Mode.VPN && privateDnsState is PrivateDnsState.Configured
 
         when (mode) {
             Mode.VPN -> {
-                dns.isVisible = true
+                dns.isVisible = privateDnsState !is PrivateDnsState.Configured
                 ipv6.isVisible = true
 
                 when (applistType.value) {
@@ -171,6 +187,7 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
             "8.8.8.8" to getString(R.string.dns_google),
             "1.1.1.1" to getString(R.string.dns_cloudflare),
             "9.9.9.9" to getString(R.string.dns_quad9),
+            "77.88.8.8" to getString(R.string.dns_yandex),
         )
 
     private fun dnsSummary(): String {
