@@ -7,6 +7,7 @@ data class TestState(
     val isStopping: Boolean = false,
     val currentStrategy: Int = 0,
     val strategies: List<StrategyResult> = emptyList(),
+    val carriedStrategies: List<StrategyResult> = emptyList(),
     val failed: Boolean = false,
     val wasInterrupted: Boolean = false,
 )

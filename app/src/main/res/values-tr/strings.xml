@@ -117,6 +117,8 @@
     <string name="cmd_history_pinned">Sabitlendi</string>
     <string name="cmd_history_applied">Uygulandı</string>
     <string name="cmd_history_delete">Sil</string>
+    <string name="cmd_history_test">Test et</string>
+    <string name="cmd_history_test_all">Tümünü test et</string>
     <string name="telegram_link">Telegram grubu</string>
     <string name="title_test">Proxy testi</string>
     <string name="test_unavailable">Önce testin bitmesini bekleyin</string>
