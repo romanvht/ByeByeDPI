@@ -159,6 +159,7 @@
     <string name="test_show_details">Показать детали</string>
     <string name="test_hide_details">Скрыть детали</string>
     <string name="test_expand">Развернуть</string>
+    <string name="test_result_time">%1$d/%2$d · %3$d мс</string>
     <string name="battery_optimization">Оптимизация батареи</string>
     <string name="battery_optimization_summary">Отключите для улучшения стабильности</string>
     <string name="battery_optimization_disabled_summary">Отключена</string>

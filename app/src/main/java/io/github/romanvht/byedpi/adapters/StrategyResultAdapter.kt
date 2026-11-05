@@ -17,6 +17,7 @@ import io.github.romanvht.byedpi.data.StrategyResult
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import io.github.romanvht.byedpi.utility.ClipboardUtils
+import io.github.romanvht.byedpi.utility.formatTestResult
 
 class StrategyResultAdapter(
     private val context: Context,
@@ -78,7 +79,7 @@ class StrategyResultAdapter(
                 holder.progressBar.isIndeterminate = false
                 holder.progressBar.max = strategy.totalRequests
                 holder.progressBar.progress = strategy.successCount
-                holder.progressTextView.text = "${strategy.successCount}/${strategy.totalRequests}"
+                holder.progressTextView.text = context.formatTestResult(strategy.successCount, strategy.totalRequests, strategy.responseTimeMs)
             }
         } else {
             holder.progressLayout.visibility = View.GONE
@@ -127,7 +128,7 @@ class StrategyResultAdapter(
                     holder.progressBar.isIndeterminate = false
                     holder.progressBar.max = strategy.totalRequests
                     holder.progressBar.progress = strategy.successCount
-                    holder.progressTextView.text = "${strategy.successCount}/${strategy.totalRequests}"
+                    holder.progressTextView.text = context.formatTestResult(strategy.successCount, strategy.totalRequests, strategy.responseTimeMs)
                 }
             }
 
@@ -164,11 +165,7 @@ class StrategyResultAdapter(
     fun updateStrategies(newStrategies: List<StrategyResult>) {
         strategies.clear()
 
-        val sorted = newStrategies.sortedWith(compareByDescending<StrategyResult> { it.isCompleted }
-            .thenByDescending { it.successPercentage }
-            .thenByDescending { it.successCount })
-
-        strategies.addAll(sorted)
+        strategies.addAll(newStrategies.sortedWith(StrategyResult.ORDER))
         notifyDataSetChanged()
     }
 
