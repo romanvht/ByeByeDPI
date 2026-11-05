@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.data.SiteResult
+import io.github.romanvht.byedpi.utility.formatTestResult
 
 class SiteResultAdapter : RecyclerView.Adapter<SiteResultAdapter.SiteViewHolder>() {
 
@@ -23,11 +24,10 @@ class SiteResultAdapter : RecyclerView.Adapter<SiteResultAdapter.SiteViewHolder>
         return SiteViewHolder(view)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SiteViewHolder, position: Int) {
         val site = sites[position]
         holder.siteTextView.text = site.site
-        holder.resultTextView.text = "${site.successCount}/${site.totalCount}"
+        holder.resultTextView.text = holder.itemView.context.formatTestResult(site.successCount, site.totalCount, site.responseTimeMs)
     }
 
     override fun getItemCount(): Int {

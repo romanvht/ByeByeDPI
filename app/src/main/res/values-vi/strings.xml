@@ -160,6 +160,7 @@
     <string name="test_show_details">Hiện chi tiết</string>
     <string name="test_hide_details">Ẩn chi tiết</string>
     <string name="test_expand">Mở rộng</string>
+    <string name="test_result_time">%1$d/%2$d · %3$d ms</string>
     <string name="battery_optimization">Tối ưu pin</string>
     <string name="battery_optimization_summary">Bật để tăng độ ổn định</string>
     <string name="battery_optimization_disabled_summary">Đã tắt</string>
