@@ -1,3 +1,4 @@
+ByeByeDPI Android
 <div align="center">
   <p>
     <img src="https://github.com/romanvht/ByeDPIAndroid/raw/master/.github/images/app.svg" alt="Логотип ByeDPI" width="200" />
