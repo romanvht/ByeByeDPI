@@ -24,6 +24,7 @@ import io.github.romanvht.byedpi.data.AppStatus
 import io.github.romanvht.byedpi.data.Mode
 import io.github.romanvht.byedpi.data.StrategyResult
 import io.github.romanvht.byedpi.data.TestState
+import io.github.romanvht.byedpi.data.bestSuccessfulStrategy
 import io.github.romanvht.byedpi.services.ServiceManager
 import io.github.romanvht.byedpi.services.TestService
 import io.github.romanvht.byedpi.services.appStatus
@@ -40,6 +41,7 @@ class TestActivity : BaseActivity() {
     private lateinit var progressTextView: TextView
     private lateinit var disclaimerTextView: TextView
     private lateinit var startStopButton: MaterialButton
+    private lateinit var autoApplyButton: MaterialButton
     private lateinit var strategyAdapter: StrategyResultAdapter
     private lateinit var cmdHistoryUtils: HistoryUtils
 
@@ -57,6 +59,7 @@ class TestActivity : BaseActivity() {
         cmdHistoryUtils = HistoryUtils(this)
         strategiesRecyclerView = findViewById(R.id.strategiesRecyclerView)
         startStopButton = findViewById(R.id.startStopButton)
+        autoApplyButton = findViewById(R.id.autoApplyButton)
         progressTextView = findViewById(R.id.progressTextView)
         disclaimerTextView = findViewById(R.id.disclaimerTextView)
 
@@ -84,6 +87,14 @@ class TestActivity : BaseActivity() {
             if (isTesting) TestService.stop() else TestService.start(this)
 
             startStopButton.postDelayed({ startStopButton.isClickable = true }, 1000)
+        }
+
+        autoApplyButton.setOnClickListener {
+            if (isTesting) {
+                Toast.makeText(this, R.string.test_unavailable, Toast.LENGTH_SHORT).show()
+            } else {
+                TestService.start(this, autoApplyBest = true)
+            }
         }
 
         startStopButton.setOnFocusChangeListener { _, hasFocus ->
@@ -140,6 +151,7 @@ class TestActivity : BaseActivity() {
     private fun renderState(state: TestState) {
         startStopButton.text = getString(if (state.isRunning) R.string.test_stop else R.string.test_start)
         startStopButton.isEnabled = !state.isStopping
+        autoApplyButton.isEnabled = !state.isRunning && !state.isStopping
         if (state.isRunning) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -175,9 +187,22 @@ class TestActivity : BaseActivity() {
             }
         }
         if (reorder) strategyAdapter.updateStrategies(strategies)
+
+        if (!state.isRunning && TestService.consumeAutoApplyBest(state.runId)) {
+            val isComplete = !state.failed && !state.wasInterrupted &&
+                state.strategies.isNotEmpty() && state.strategies.all { it.isCompleted }
+            val best = if (isComplete) bestSuccessfulStrategy(state.strategies) else null
+            if (!isComplete) {
+                Toast.makeText(this, R.string.test_auto_incomplete, Toast.LENGTH_LONG).show()
+            } else if (best == null) {
+                Toast.makeText(this, R.string.test_auto_no_success, Toast.LENGTH_LONG).show()
+            } else {
+                addToHistory(best.command, autoApplied = true)
+            }
+        }
     }
 
-    private fun addToHistory(command: String) {
+    private fun addToHistory(command: String, autoApplied: Boolean = false) {
         if (isTesting) return
 
         prefs.edit(commit = true) { putString("byedpi_cmd_args", command) }
@@ -190,9 +215,9 @@ class TestActivity : BaseActivity() {
             val toastText = withContext(Dispatchers.Main) {
                 if (!isTesting && appStatus.first == AppStatus.Running) {
                     ServiceManager.restart(this@TestActivity, mode)
-                    R.string.service_restart
+                    if (autoApplied) R.string.test_auto_applied else R.string.service_restart
                 } else {
-                    R.string.cmd_history_applied
+                    if (autoApplied) R.string.test_auto_applied else R.string.cmd_history_applied
                 }
             }
 
