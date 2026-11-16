@@ -123,6 +123,10 @@
     <string name="summary_test">Testing of prepared command sets</string>
     <string name="test_start">Start testing</string>
     <string name="test_stop">Stop testing</string>
+    <string name="test_auto_apply">Auto-select and apply</string>
+    <string name="test_auto_applied">The best strategy was applied automatically</string>
+    <string name="test_auto_incomplete">Auto-selection did not finish; arguments were not changed</string>
+    <string name="test_auto_no_success">No successful strategy was found</string>
     <string name="test_disclaimer">
         This section allows you to test the application using a set of pre-prepared commands.
         \nDuring testing, the system checks the availability of various websites via the proxy, and you can observe the process in real time.

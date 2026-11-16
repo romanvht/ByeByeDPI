@@ -124,6 +124,10 @@
     <string name="summary_test">Kiểm tra các bộ lệnh đã chuẩn bị</string>
     <string name="test_start">Bắt đầu kiểm tra</string>
     <string name="test_stop">Dừng kiểm tra</string>
+    <string name="test_auto_apply">Tự động chọn và áp dụng</string>
+    <string name="test_auto_applied">Chiến lược tốt nhất đã được áp dụng tự động</string>
+    <string name="test_auto_incomplete">Quá trình tự động chọn chưa hoàn tất, không thay đổi tham số</string>
+    <string name="test_auto_no_success">Không tìm thấy chiến lược thành công để áp dụng</string>
     <string name="test_disclaimer">
         Phần này cho phép bạn kiểm tra ứng dụng bằng các bộ lệnh đã chuẩn bị sẵn.\n
         Trong quá trình kiểm tra, hệ thống sẽ kiểm tra khả năng truy cập các trang web qua proxy, bạn có thể theo dõi tiến trình theo thời gian thực.\n

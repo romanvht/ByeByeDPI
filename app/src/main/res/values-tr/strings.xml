@@ -123,6 +123,10 @@
     <string name="summary_test">Hazırlanmış komut setlerinin test edilmesi</string>
     <string name="test_start">Testi başlat</string>
     <string name="test_stop">Testi durdur</string>
+    <string name="test_auto_apply">En iyi stratejiyi otomatik seç</string>
+    <string name="test_auto_applied">En iyi strateji otomatik olarak uygulandı</string>
+    <string name="test_auto_incomplete">Otomatik seçim tamamlanmadı, argümanlar değiştirilmedi</string>
+    <string name="test_auto_no_success">Uygulanabilecek başarılı strateji bulunamadı</string>
     <string name="test_disclaimer">
         Bu bölüm, önceden hazırlanmış komut setlerini kullanarak uygulamayı test etmenizi sağlar.\n
         Test sırasında sistem, proxy üzerinden çeşitli web sitelerine erişimi kontrol eder ve süreci gerçek zamanlı olarak izleyebilirsiniz.\n

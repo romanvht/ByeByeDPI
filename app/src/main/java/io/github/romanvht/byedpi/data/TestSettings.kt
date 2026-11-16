@@ -10,3 +10,10 @@ data class TestSettings(
     val requestTimeout: Long,
     val requestLimit: Int,
 )
+
+fun parseTestCommands(content: String, sni: String): List<String> =
+    content.lineSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() && !it.startsWith("#") }
+        .map { it.replace("{sni}", "\"$sni\"") }
+        .toList()
