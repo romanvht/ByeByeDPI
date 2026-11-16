@@ -20,3 +20,17 @@
 -s 1+s -f -1 -a 1
 -f-200 -Qr -s3:5+sm -a1 -At,r,s,c
 -s1 -d1 -s5+s -s10+s -s15+s -s20+s -r1+s -S -a1 -At,r,s,c
+# TCP TLS adaptations from Zapret general profiles; UDP and host-list filters are not portable here
+-f 1+s:3 -n {sni}
+-f 1+s:5 -n {sni}
+-f 1+s:6 -n {sni}
+-f 1+s:11 -n {sni}
+-f 1+s:12 -n {sni}
+# Fake TLS combined with split-based desync (Zapret fake/multisplit and hostfakesplit)
+-f 1+s:6 -n {sni} -s 1+s
+-f 1+s:11 -n {sni} -s 1+s
+-f 1+s:6 -s 1+s
+# Fake TLS combined with out-of-order segments (Zapret multidisorder)
+-f 1+s:6 -d 1+s
+# Randomized fake TLS ClientHello (Zapret fake-tls-mod=rnd)
+-f 1+s:8 -n {sni} -Q r

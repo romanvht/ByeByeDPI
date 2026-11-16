@@ -18,3 +18,11 @@ data class SiteResult(
     val successCount: Int,
     val totalCount: Int
 )
+
+fun bestSuccessfulStrategy(strategies: List<StrategyResult>): StrategyResult? =
+    strategies.asSequence()
+        .filter { it.isCompleted && it.totalRequests > 0 && it.successCount > 0 }
+        .maxWithOrNull(
+            compareBy<StrategyResult> { it.successCount.toDouble() / it.totalRequests }
+                .thenBy { it.successCount }
+        )

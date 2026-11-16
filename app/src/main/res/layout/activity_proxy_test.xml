@@ -36,6 +36,21 @@
                 app:strokeWidth="0dp"
                 android:text="@string/test_start" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/autoApplyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingLeft="10pt"
+                android:paddingRight="10pt"
+                android:textAllCaps="true"
+                android:focusable="true"
+                app:strokeWidth="0dp"
+                android:text="@string/test_auto_apply" />
+
             <TextView
                 android:id="@+id/progressTextView"
                 android:layout_width="match_parent"

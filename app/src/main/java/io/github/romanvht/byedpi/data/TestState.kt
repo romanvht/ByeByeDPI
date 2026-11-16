@@ -9,4 +9,5 @@ data class TestState(
     val strategies: List<StrategyResult> = emptyList(),
     val failed: Boolean = false,
     val wasInterrupted: Boolean = false,
+    val autoApplyBest: Boolean = false,
 )

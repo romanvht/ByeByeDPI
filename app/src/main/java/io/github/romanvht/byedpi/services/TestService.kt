@@ -44,7 +44,7 @@ class TestService : Service() {
         val isRunning: Boolean
             get() = state.value.isRunning
 
-        fun start(context: Context) {
+        fun start(context: Context, autoApplyBest: Boolean = false) {
             if (isRunning) return
             ServiceManager.refresh(context)
             val previous = state.value
@@ -55,6 +55,7 @@ class TestService : Service() {
                 currentStrategy = 0,
                 failed = false,
                 wasInterrupted = false,
+                autoApplyBest = autoApplyBest,
             )
             try {
                 ContextCompat.startForegroundService(context, Intent(context, TestService::class.java).setAction(START_ACTION))
@@ -62,6 +63,13 @@ class TestService : Service() {
                 mutableState.value = previous.copy(failed = true)
                 Log.e(TAG, "Failed to start proxy tests", e)
             }
+        }
+
+        fun consumeAutoApplyBest(runId: Long): Boolean {
+            val current = state.value
+            if (current.runId != runId || current.isRunning || !current.autoApplyBest) return false
+            mutableState.value = current.copy(autoApplyBest = false)
+            return true
         }
 
         fun stop() {
@@ -247,6 +255,7 @@ class TestService : Service() {
                         isLoaded = true,
                         strategies = snapshot(strategies),
                         failed = failed,
+                        autoApplyBest = previous.autoApplyBest,
                     ) else previous.copy(failed = failed)
                 }
             }
@@ -339,7 +348,7 @@ class TestService : Service() {
         val sniValue = prefs.getStringNotNull("byedpi_proxytest_sni", "google.com")
         val content = if (userCommands) prefs.getStringNotNull("byedpi_proxytest_commands", "")
         else assets.open("proxytest_strategies.list").bufferedReader().use { it.readText() }
-        val commands = content.replace("{sni}", "\"${sniValue}\"").lines().map { it.trim() }.filter { it.isNotEmpty() }
+        val commands = parseTestCommands(content, sniValue)
         val host = prefs.getStringNotNull("byedpi_proxy_ip", "127.0.0.1")
         val port = prefs.getIntStringNotNull("byedpi_proxy_port", 1080)
         val delaySec = prefs.getIntStringNotNull("byedpi_proxytest_delay", 1).coerceAtLeast(0)
