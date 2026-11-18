@@ -159,6 +159,7 @@
     <string name="test_show_details">Мәліметтерді көрсету</string>
     <string name="test_hide_details">Мәліметтерді жасыру</string>
     <string name="test_expand">Кеңейту</string>
+    <string name="test_result_time">%1$d/%2$d · %3$d мс</string>
     <string name="battery_optimization">Батареяны оңтайландыру</string>
     <string name="battery_optimization_summary">Тұрақтылықты жақсарту үшін қосыңыз</string>
     <string name="battery_optimization_disabled_summary">Ажыратылған</string>

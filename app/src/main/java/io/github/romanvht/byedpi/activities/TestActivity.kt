@@ -28,6 +28,7 @@ import io.github.romanvht.byedpi.services.ServiceManager
 import io.github.romanvht.byedpi.services.TestService
 import io.github.romanvht.byedpi.services.appStatus
 import io.github.romanvht.byedpi.utility.HistoryUtils
+import io.github.romanvht.byedpi.utility.formatTestResult
 import io.github.romanvht.byedpi.utility.getPreferences
 import io.github.romanvht.byedpi.utility.mode
 import kotlinx.coroutines.Dispatchers
@@ -216,10 +217,10 @@ class TestActivity : BaseActivity() {
             sb.appendLine("${strategy.command}\n")
 
             strategy.siteResults.forEach { site ->
-                sb.appendLine("${site.site} - ${site.successCount}/${site.totalCount}")
+                sb.appendLine("${site.site} - ${formatTestResult(site.successCount, site.totalCount, site.responseTimeMs)}")
             }
 
-            sb.appendLine("\n${strategy.successCount}/${strategy.totalRequests}")
+            sb.appendLine("\n${formatTestResult(strategy.successCount, strategy.totalRequests, strategy.responseTimeMs)}")
             sb.appendLine("-------------")
         }
 
