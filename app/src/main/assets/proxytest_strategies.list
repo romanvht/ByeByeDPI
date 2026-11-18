@@ -2,7 +2,7 @@
 -d1 -d3+s -s6+s -d9+s -s12+s -d15+s -s20+s -d25+s -s30+s -d35+s -r1+s -a1 -At,r,s,c -d1 -d3+s -s6+s -d9+s -s12+s -d15+s -s20+s -d25+s -s30+s -d35+s -a1
 -q2 -s2 -s3+s -r3 -s4 -r4 -s5+s -r5+s -s6 -s7+s -r8 -s9+s -Qr -Mh,d,r -a1 -At,r,s,c -s2+s -r2 -d2 -s3 -r3 -r4 -s4 -d5+s -r5 -d6 -s7+s -d7 -a1
 -o1 -a1 -At,r,s,c -s1 -s5+s -s10+s -s15+s -s20+s -r1+s -a1 -At,r,s,c -s1 -s5+s -s10+s -s15+s -s20+s -a1
--n {sni} -Qr -f-204 -a1 -At,r,s,c -d1 -s3+s -s5+s -a1 -At,r,s,c -o2 -f-43 -a1 -At,r,s,c -r5 -Mh -s1+s -s3+sm -a1
+-n {sni} -Qr -f-204 -s1+sm -a1 -At,r,s,c -d1 -s3+s -s5+s -a1 -At,r,s,c -o2 -f-43 -a1 -At,r,s,c -r5 -Mh -s1+s -s3+sm -a1
 -n {sni} -Qr -f-205 -a1 -At,r,s,c -s1:3+sm -a1 -At,r,s,c -s5:8+sm -a1 -At,r,s,c -d3 -q7 -o2 -f-43 -f-85 -f-165 -r5 -Mh -a1
 -d1+s -s50+s -a1 -At,r,s,c -f20 -r2+s -a1 -At,r,s,c -d2 -s1+s -s5+s -s10+s -s15+s -s25+s -s35+s -s50+s -s60+s -a1
 -o1 -a1 -At,r,s,c -f-1 -a1 -At,r,s,c -d1+sm -a1 -At,r,s,c -n {sni} -Qr -f1 -d1+sm -s1+sm -S -a1
