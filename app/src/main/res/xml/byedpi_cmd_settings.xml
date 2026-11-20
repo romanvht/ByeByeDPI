@@ -7,19 +7,20 @@
         android:key="byedpi_cmd_args"
         android:title="@string/command_line_arguments"
         android:dialogTitle="@string/command_line_arguments"
+        android:dialogMessage="@string/command_line_arguments_hint"
         android:inputType="textMultiLine"
-        app:iconSpaceReserved="false"
-        app:useSimpleSummaryProvider="true" />
+        app:iconSpaceReserved="false" />
 
-    <Preference
+    <io.github.romanvht.byedpi.views.BindablePreference
         android:key="cmd_editor_buttons"
         android:layout="@layout/cmd_editor_buttons"
         android:selectable="false" />
 
-    <Preference
+    <io.github.romanvht.byedpi.views.BindablePreference
         android:key="cmd_history_header"
         android:title="@string/cmd_history_title"
         android:summary="@string/cmd_history_title_summary"
-        android:layout="@layout/history_category" />
+        android:layout="@layout/history_category"
+        android:selectable="false" />
 
 </PreferenceScreen>

@@ -35,14 +35,17 @@ data class UISettings(
         None, Split, Disorder, Fake, OOB, DISOOB;
 
         companion object {
-            fun fromName(name: String): DesyncMethod = when (name) {
+            fun fromName(name: String): DesyncMethod =
+                fromNameOrNull(name) ?: throw IllegalArgumentException("Unknown desync method: $name")
+
+            fun fromNameOrNull(name: String): DesyncMethod? = when (name) {
                 "none" -> None
                 "split" -> Split
                 "disorder" -> Disorder
                 "fake" -> Fake
                 "oob" -> OOB
                 "disoob" -> DISOOB
-                else -> throw IllegalArgumentException("Unknown desync method: $name")
+                else -> null
             }
         }
     }
@@ -51,18 +54,21 @@ data class UISettings(
         Disable, Blacklist, Whitelist;
 
         companion object {
-            fun fromName(name: String): HostsMode = when (name) {
+            fun fromName(name: String): HostsMode =
+                fromNameOrNull(name) ?: throw IllegalArgumentException("Unknown hosts mode: $name")
+
+            fun fromNameOrNull(name: String): HostsMode? = when (name) {
                 "disable" -> Disable
                 "blacklist" -> Blacklist
                 "whitelist" -> Whitelist
-                else -> throw IllegalArgumentException("Unknown hosts mode: $name")
+                else -> null
             }
         }
     }
 
     companion object {
         fun fromSharedPreferences(preferences: SharedPreferences): UISettings {
-            val hostsMode = preferences.getString("byedpi_hosts_mode", null) ?.let { HostsMode.fromName(it) } ?: HostsMode.Disable
+            val hostsMode = preferences.getString("byedpi_hosts_mode", null)?.let { HostsMode.fromNameOrNull(it) } ?: HostsMode.Disable
 
             val hosts = when (hostsMode) {
                 HostsMode.Blacklist -> preferences.getString("byedpi_hosts_blacklist", null)
@@ -80,12 +86,12 @@ data class UISettings(
                 desyncHttp = preferences.getBoolean("byedpi_desync_http", true),
                 desyncHttps = preferences.getBoolean("byedpi_desync_https", true),
                 desyncUdp = preferences.getBoolean("byedpi_desync_udp", true),
-                desyncMethod = preferences.getString("byedpi_desync_method", null) ?.let { DesyncMethod.fromName(it) } ?: DesyncMethod.OOB,
+                desyncMethod = preferences.getString("byedpi_desync_method", null)?.let { DesyncMethod.fromNameOrNull(it) } ?: DesyncMethod.OOB,
                 splitPosition = preferences.getString("byedpi_split_position", null)?.toIntOrNull() ?: 1,
                 splitAtHost = preferences.getBoolean("byedpi_split_at_host", false),
                 fakeTtl = preferences.getString("byedpi_fake_ttl", null)?.toIntOrNull() ?: 8,
                 fakeSni = preferences.getString("byedpi_fake_sni", null) ?: "www.iana.org",
-                oobChar = preferences.getString("byedpi_oob_data", null) ?: "a",
+                oobChar = preferences.getString("byedpi_oob_data", null)?.takeIf { it.isNotEmpty() } ?: "a",
                 hostMixedCase = preferences.getBoolean("byedpi_host_mixed_case", false),
                 domainMixedCase = preferences.getBoolean("byedpi_domain_mixed_case", false),
                 hostRemoveSpaces = preferences.getBoolean("byedpi_host_remove_spaces", false),

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
@@ -42,11 +43,22 @@ class AppSelectionFragment : Fragment() {
         searchView = view.findViewById(R.id.searchView)
         progressBar = view.findViewById(R.id.progressBar)
 
+        // Explain what checking an app does in the current filter mode
+        view.findViewById<TextView>(R.id.selection_hint).setText(
+            if (prefs.getString("applist_type", "disable") == "whitelist") R.string.apps_select_whitelist_hint
+            else R.string.apps_select_blacklist_hint
+        )
+
         setupRecyclerView()
         setupSearchView()
         loadApps()
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.apps_select)
     }
 
     override fun onDestroyView() {

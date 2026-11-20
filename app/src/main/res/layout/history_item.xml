@@ -1,70 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
+    android:layout_marginStart="16dp"
     android:layout_marginTop="4dp"
-    android:layout_marginEnd="8dp"
+    android:layout_marginEnd="16dp"
     android:layout_marginBottom="4dp"
-    app:strokeWidth="0dp"
-    app:cardCornerRadius="12dp"
     android:clickable="true"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackground">
+    android:focusable="true">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <LinearLayout
+            android:id="@+id/header_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/command_name"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:visibility="gone"
-                android:paddingBottom="4dp" />
-
-            <TextView
-                android:id="@android:id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:layout_weight="1"
                 android:ellipsize="end"
-                android:maxLines="3" />
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="YouTube" />
 
             <TextView
-                android:id="@android:id/summary"
-                android:layout_width="match_parent"
+                android:id="@+id/applied_badge"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_badge"
+                android:backgroundTint="?attr/colorPrimaryContainer"
+                android:paddingStart="10dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="2dp"
+                android:text="@string/cmd_history_applied"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="?attr/colorOnPrimaryContainer"
                 android:visibility="gone"
-                android:paddingTop="4dp" />
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/pin_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@string/cmd_history_pinned"
+                android:src="@drawable/ic_pin"
+                android:visibility="gone"
+                app:tint="?attr/colorPrimary"
+                tools:visibility="visible" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/pin_icon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="12dp"
-            android:src="@drawable/ic_pin"
-            android:visibility="gone"
-            android:contentDescription="@string/cmd_history_pinned"
-            app:tint="?attr/colorPrimary" />
+        <TextView
+            android:id="@android:id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.App.Code"
+            android:textColor="?attr/colorOnSurface"
+            android:textDirection="ltr"
+            tools:text="-o1 -a1 -r-5+se" />
 
-    </RelativeLayout>
+        <TextView
+            android:id="@android:id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

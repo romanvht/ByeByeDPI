@@ -1,8 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Questions about the program on Github / Вопросы по програме на Github
-    url: https://github.com/dovecoteescapee/ByeDPIAndroid/discussions
-    about: Please do not ask questions in the issue tracker / Пожалуйста, не задавайте вопросы в трекере задач
-  - name: Questions about the program on NTC.party / Вопросы по програме на NTC.party
+  - name: Questions and setup help on NTC.party / Вопросы и помощь с настройкой на NTC.party
     url: https://ntc.party/c/community-software/byedpi/39
     about: Please do not ask questions in the issue tracker / Пожалуйста, не задавайте вопросы в трекере задач

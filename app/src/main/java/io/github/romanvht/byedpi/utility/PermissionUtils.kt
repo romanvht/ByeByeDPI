@@ -2,7 +2,6 @@ package io.github.romanvht.byedpi.utility
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -48,15 +47,9 @@ object PermissionUtils {
         return VpnService.prepare(context) == null
     }
 
-    fun requestNotificationPermission(activity: Activity, requestCode: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                requestCode
-            )
-        }
-    }
+    /** The runtime permission needed to show notifications, or null on Android versions that do not need one. */
+    val notificationPermission: String?
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.POST_NOTIFICATIONS else null
 
     @SuppressLint("BatteryLife")
     fun requestBatteryOptimization(context: Context) {

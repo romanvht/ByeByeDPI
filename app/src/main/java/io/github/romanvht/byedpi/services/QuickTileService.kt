@@ -7,6 +7,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.util.Log
 import androidx.annotation.RequiresApi
+import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.data.*
 import io.github.romanvht.byedpi.receiver.ServiceActionReceiver
 import io.github.romanvht.byedpi.utility.getPreferences
@@ -90,6 +91,11 @@ class QuickTileService : TileService() {
     private fun setState(state: Int) {
         appTile?.apply {
             this.state = state
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                subtitle = getString(
+                    if (state == Tile.STATE_ACTIVE) R.string.status_connected else R.string.status_disconnected
+                )
+            }
             updateTile()
         }
     }

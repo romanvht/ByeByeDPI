@@ -15,6 +15,7 @@ import io.github.romanvht.byedpi.data.STOP_ACTION
 import io.github.romanvht.byedpi.receiver.ServiceActionReceiver
 import io.github.romanvht.byedpi.services.ServiceManager
 import io.github.romanvht.byedpi.services.appStatus
+import io.github.romanvht.byedpi.utility.HistoryUtils
 import io.github.romanvht.byedpi.utility.getCmdArgs
 import io.github.romanvht.byedpi.utility.getPreferences
 import io.github.romanvht.byedpi.utility.mode
@@ -115,13 +116,24 @@ class ToggleActivity : Activity() {
         }
     }
 
+    /**
+     * This activity is exported (home screen shortcuts, automation apps), so only strategies that the
+     * user saved in the app can be selected here. Other apps cannot inject arbitrary arguments.
+     */
     private fun updateStrategy(strategy: String?): Boolean {
         val current = prefs.getCmdArgs()
-        if (strategy != null && strategy != current) {
-            prefs.edit(commit = true) { putString("byedpi_cmd_args", strategy) }
-            Log.i(TAG, "Strategy updated to: $strategy")
-            return true
+        if (strategy == null || strategy == current) return false
+
+        if (HistoryUtils(this).getHistory().none { it.text == strategy }) {
+            Log.w(TAG, "Ignoring a strategy that is not saved in the app")
+            return false
         }
-        return false
+
+        prefs.edit(commit = true) {
+            putString("byedpi_cmd_args", strategy)
+            putBoolean("byedpi_enable_cmd_settings", true)
+        }
+        Log.i(TAG, "Strategy updated to: $strategy")
+        return true
     }
 }

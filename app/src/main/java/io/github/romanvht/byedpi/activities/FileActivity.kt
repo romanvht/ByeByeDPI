@@ -55,7 +55,7 @@ class FileActivity : BaseActivity() {
     private val extension get() = if (type == TYPE_LOGS) "log" else "json"
     private val defaultFileName by lazy {
         val format = SimpleDateFormat("yyyyMMdd_HHmm", Locale.getDefault())
-        val prefix = if (type == TYPE_LOGS) "byedpi" else "bbd"
+        val prefix = if (type == TYPE_LOGS) "sidestep_logs" else "sidestep_settings"
         "${prefix}_${format.format(System.currentTimeMillis())}.$extension"
     }
     private val roots by lazy { StorageUtils.getRoots(this) }

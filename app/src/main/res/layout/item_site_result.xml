@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:clickable="true"
-    android:focusable="true"
-    android:padding="4dp"
-    android:background="?attr/selectableItemBackground">
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <View
+        android:id="@+id/siteStatusDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/bg_badge"
+        tools:backgroundTint="@color/md_success" />
 
     <TextView
         android:id="@+id/siteTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
-        android:textSize="12sp"
         android:ellipsize="end"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.App.Code"
+        android:textColor="?attr/colorOnSurface"
+        android:textDirection="ltr"
+        android:textSize="12sp"
+        tools:text="youtube.com" />
 
     <TextView
         android:id="@+id/siteResultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:layout_marginStart="8dp"/>
+        android:layout_marginStart="8dp"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        tools:text="1/1" />
 
 </LinearLayout>

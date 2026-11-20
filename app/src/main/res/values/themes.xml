@@ -1,40 +1,130 @@
-<resources>
-    <style name="Theme.ByeDPI" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#5976DF</item>
-        <item name="colorPrimaryVariant">#3C52A3</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-        <item name="colorSecondary">#5976DF</item>
-        <item name="colorSecondaryVariant">#3C52A3</item>
-        <item name="colorOnSecondary">#FFFFFF</item>
-
-        <item name="android:statusBarColor">#3C52A3</item>
-
-        <item name="colorSurface">#F5F5F5</item>
-        <item name="colorOnSurface">#212121</item>
-
-        <item name="materialCardViewStyle">@style/SmallShadowCard</item>
+    <!--
+        Theme names are brand-neutral on purpose: the brand lives in strings, colors and icons only.
+        Platform.Theme.App holds what differs between Android versions (see values-v23, values-v27).
+    -->
+    <style name="Platform.Theme.App" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Android 5.x cannot draw dark status bar icons, so keep the status bar dark there. -->
+        <item name="android:statusBarColor">@color/legacy_status_bar</item>
     </style>
 
-    <style name="AppToolbar" parent="Widget.MaterialComponents.Toolbar.Primary" />
+    <style name="Base.Theme.App" parent="Platform.Theme.App">
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_on_primary</item>
+        <item name="colorPrimaryContainer">@color/md_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/md_on_primary_container</item>
+        <item name="colorPrimaryInverse">@color/md_inverse_primary</item>
+        <item name="colorPrimaryFixed">@color/md_primary_fixed</item>
+        <item name="colorPrimaryFixedDim">@color/md_primary_fixed_dim</item>
+        <item name="colorOnPrimaryFixed">@color/md_on_primary_fixed</item>
+        <item name="colorOnPrimaryFixedVariant">@color/md_on_primary_fixed_variant</item>
 
-    <style name="SmallShadowCard" parent="Widget.MaterialComponents.CardView">
-        <item name="cardElevation">1dp</item>
+        <item name="colorSecondary">@color/md_secondary</item>
+        <item name="colorOnSecondary">@color/md_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/md_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/md_on_secondary_container</item>
+        <item name="colorSecondaryFixed">@color/md_secondary_fixed</item>
+        <item name="colorSecondaryFixedDim">@color/md_secondary_fixed_dim</item>
+        <item name="colorOnSecondaryFixed">@color/md_on_secondary_fixed</item>
+        <item name="colorOnSecondaryFixedVariant">@color/md_on_secondary_fixed_variant</item>
+
+        <item name="colorTertiary">@color/md_tertiary</item>
+        <item name="colorOnTertiary">@color/md_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/md_tertiary_container</item>
+        <item name="colorOnTertiaryContainer">@color/md_on_tertiary_container</item>
+        <item name="colorTertiaryFixed">@color/md_tertiary_fixed</item>
+        <item name="colorTertiaryFixedDim">@color/md_tertiary_fixed_dim</item>
+        <item name="colorOnTertiaryFixed">@color/md_on_tertiary_fixed</item>
+        <item name="colorOnTertiaryFixedVariant">@color/md_on_tertiary_fixed_variant</item>
+
+        <item name="colorError">@color/md_error</item>
+        <item name="colorOnError">@color/md_on_error</item>
+        <item name="colorErrorContainer">@color/md_error_container</item>
+        <item name="colorOnErrorContainer">@color/md_on_error_container</item>
+
+        <item name="android:colorBackground">@color/md_background</item>
+        <item name="colorOnBackground">@color/md_on_background</item>
+        <item name="colorSurface">@color/md_surface</item>
+        <item name="colorOnSurface">@color/md_on_surface</item>
+        <item name="colorSurfaceVariant">@color/md_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
+        <item name="colorSurfaceInverse">@color/md_inverse_surface</item>
+        <item name="colorOnSurfaceInverse">@color/md_inverse_on_surface</item>
+        <item name="colorSurfaceBright">@color/md_surface_bright</item>
+        <item name="colorSurfaceDim">@color/md_surface_dim</item>
+        <item name="colorSurfaceContainerLowest">@color/md_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/md_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/md_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/md_surface_container_highest</item>
+        <item name="colorOutline">@color/md_outline</item>
+        <item name="colorOutlineVariant">@color/md_outline_variant</item>
+
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+
+        <item name="toolbarStyle">@style/Widget.App.Toolbar</item>
+        <item name="materialCardViewStyle">@style/Widget.App.Card</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.AlertDialog</item>
+        <item name="switchPreferenceStyle">@style/Widget.App.Preference.Switch</item>
+
+        <item name="android:textAppearanceListItem">@style/TextAppearance.App.ListItem</item>
+        <item name="android:textAppearanceListItemSecondary">@style/TextAppearance.App.ListItemSecondary</item>
+        <item name="android:textAppearanceListItemSmall">@style/TextAppearance.App.ListItemSecondary</item>
     </style>
 
-    <style name="CircleButton" parent="Widget.MaterialComponents.Button">
-        <item name="cornerRadius">60dp</item>
-        <item name="android:textSize">0sp</item>
-        <item name="backgroundTint">?attr/colorPrimary</item>
-        <item name="iconTint">?attr/colorOnPrimary</item>
+    <style name="Theme.App" parent="Base.Theme.App" />
+
+    <!-- Toolbar used on every screen -->
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar.Surface">
+        <item name="android:background">?attr/colorSurface</item>
     </style>
 
-    <style name="CustomAlertDialog" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
-        <!-- -->
+    <!-- Default card: filled, no shadow -->
+    <style name="Widget.App.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="cardCornerRadius">20dp</item>
     </style>
 
-    <style name="PillCard">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
+    <!-- Rows inside cards on the main screen -->
+    <style name="Widget.App.Card.Group">
+        <item name="cardCornerRadius">24dp</item>
+    </style>
+
+    <!-- Dialogs created by AppCompat (used by preference screens) -->
+    <style name="ThemeOverlay.App.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:windowBackground">@drawable/material_alert</item>
+        <item name="android:textColorPrimary">?attr/colorOnSurface</item>
+        <item name="android:textColorSecondary">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="Widget.App.Preference.Switch" parent="Preference.SwitchPreference.Material">
+        <item name="android:widgetLayout">@layout/material_switch</item>
+    </style>
+
+    <style name="TextAppearance.App.ListItem" parent="TextAppearance.Material3.BodyLarge" />
+
+    <style name="TextAppearance.App.ListItemSecondary" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Monospace text for strategies, domains and addresses -->
+    <style name="TextAppearance.App.Code" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Section header above grouped cards -->
+    <style name="Widget.App.SectionHeader" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceTitleSmall</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 </resources>

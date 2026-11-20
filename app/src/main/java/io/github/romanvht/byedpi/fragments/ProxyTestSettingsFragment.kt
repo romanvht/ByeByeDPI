@@ -33,6 +33,7 @@ class ProxyTestSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
+        requireActivity().setTitle(R.string.test_settings_title)
         updatePreferences()
         sharedPreferences?.registerOnSharedPreferenceChangeListener(preferenceListener)
     }
@@ -49,7 +50,7 @@ class ProxyTestSettingsFragment : PreferenceFragmentCompat() {
         val activeLists = DomainListUtils.getLists(requireContext()).filter { it.isActive }
 
         manageDomainLists.summary = if (activeLists.isEmpty()) {
-            getString(R.string.domain_lists_summary)
+            getString(R.string.domain_lists_none_active)
         } else {
             activeLists.joinToString(", ") { it.name }
         }
@@ -63,7 +64,7 @@ class ProxyTestSettingsFragment : PreferenceFragmentCompat() {
         pref.summaryProvider = Preference.SummaryProvider<EditTextPreference> { p ->
             val value = p.text ?: "—"
             val description = getString(descriptionResId)
-            "$value - $description"
+            "$value · $description"
         }
     }
 }

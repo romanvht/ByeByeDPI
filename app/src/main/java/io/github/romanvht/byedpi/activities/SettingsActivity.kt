@@ -1,13 +1,14 @@
 package io.github.romanvht.byedpi.activities
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.data.AppSettings
 import io.github.romanvht.byedpi.fragments.ByeDpiCMDSettingsFragment
@@ -25,7 +26,7 @@ class SettingsActivity : BaseActivity() {
 
         exportSections = savedInstanceState
             ?.getStringArrayList("export_sections")
-            ?.map(Section::valueOf)
+            ?.mapNotNull { name -> Section.entries.firstOrNull { it.name == name } }
             ?.toSet()
             ?: Section.entries.toSet()
 
@@ -33,28 +34,15 @@ class SettingsActivity : BaseActivity() {
         setupToolbar()
 
         if (savedInstanceState == null) {
-            val openFragment = intent.getStringExtra("open_fragment")
-
-            when (openFragment) {
-                "cmd" -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.settings, ByeDpiCMDSettingsFragment())
-                        .commit()
-                }
-                "ui" -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.settings, ByeDpiUISettingsFragment())
-                        .commit()
-                }
-                else -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.settings, MainSettingsFragment())
-                        .commit()
-                }
+            val fragment = when (intent.getStringExtra("open_fragment")) {
+                "cmd" -> ByeDpiCMDSettingsFragment()
+                "ui" -> ByeDpiUISettingsFragment()
+                else -> MainSettingsFragment()
             }
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.settings, fragment)
+                .commit()
         }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -68,41 +56,33 @@ class SettingsActivity : BaseActivity() {
         )
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_settings, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         android.R.id.home -> {
             onBackPressedDispatcher.onBackPressed()
             true
         }
 
-        R.id.action_reset_settings -> {
-            SettingsUtils.resetSettings(this) {
-                recreate()
-            }
-            true
-        }
-
-        R.id.action_export_settings -> {
-            showSectionSelectionDialog(
-                title = R.string.export_settings,
-                availableSections = Section.entries.toSet()
-            ) { sections ->
-                exportSections = sections
-                openFile(FileActivity.MODE_CREATE)
-            }
-            true
-        }
-
-        R.id.action_import_settings -> {
-            openFile(FileActivity.MODE_OPEN)
-            true
-        }
-
         else -> super.onOptionsItemSelected(item)
+    }
+
+    fun exportSettings() {
+        showSectionSelectionDialog(
+            title = R.string.export_settings,
+            availableSections = Section.entries.toSet()
+        ) { sections ->
+            exportSections = sections
+            openFile(FileActivity.MODE_CREATE)
+        }
+    }
+
+    fun importSettings() {
+        openFile(FileActivity.MODE_OPEN)
+    }
+
+    fun resetSettings() {
+        SettingsUtils.resetSettings(this) {
+            recreate()
+        }
     }
 
     private val fileLauncher = registerForActivityResult(
@@ -166,18 +146,18 @@ class SettingsActivity : BaseActivity() {
         val labels = sections.map { getString(it.label) }.toTypedArray()
 
         lateinit var dialog: AlertDialog
-        dialog = AlertDialog.Builder(this)
+        dialog = MaterialAlertDialogBuilder(this)
             .setTitle(title)
             .setMultiChoiceItems(labels, checkedItems) { _, which, isChecked ->
                 checkedItems[which] = isChecked
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = checkedItems.any { it }
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = checkedItems.any { it }
             }
             .setPositiveButton(android.R.string.ok, null)
             .setNegativeButton(android.R.string.cancel, null)
             .create()
 
         dialog.setOnShowListener {
-            val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
 
             positiveButton.setOnClickListener {
                 val selected = sections

@@ -2,6 +2,7 @@ package io.github.romanvht.byedpi.utility
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import io.github.romanvht.byedpi.data.Command
 import com.google.gson.Gson
 import androidx.core.content.edit
@@ -63,10 +64,13 @@ class HistoryUtils(context: Context) {
     }
 
     fun getHistory(): List<Command> {
-        val historyJson = sharedPreferences.getString(historyKey, null)
-        return if (historyJson != null) {
-            Gson().fromJson(historyJson, Array<Command>::class.java).toList()
-        } else {
+        val historyJson = sharedPreferences.getString(historyKey, null) ?: return emptyList()
+        return try {
+            Gson().fromJson(historyJson, Array<Command>::class.java)
+                ?.filter { @Suppress("SENSELESS_COMPARISON") (it != null && it.text != null) }
+                .orEmpty()
+        } catch (e: Exception) {
+            Log.e("HistoryUtils", "Failed to read saved strategies", e)
             emptyList()
         }
     }

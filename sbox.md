@@ -13,7 +13,7 @@
   - [ADB не включается:](#adb-не-включается)
   - [Проблемы подключения:](#проблемы-подключения)
 - [Альтернативный метод для YouTube](#альтернативный-метод-для-youtube)
-  - [1. Настройка ByeByeDPI](#1-настройка-byebyedpi)
+  - [1. Настройка Sidestep](#1-настройка-sidestep)
   - [2. Настройка SmartTube](#2-настройка-smarttube)
 
 # Определение устройства
@@ -59,9 +59,9 @@
 - На вкладке **Консоль** выполните команды:
 
 ```
-  shell pm grant io.github.romanvht.byedpi android.permission.WRITE_SECURE_SETTINGS
-  shell appops set io.github.romanvht.byedpi WRITE_SETTINGS allow
-  shell appops set io.github.romanvht.byedpi ACTIVATE_VPN allow
+  shell pm grant io.github.metetv2021cloud.sidestep android.permission.WRITE_SECURE_SETTINGS
+  shell appops set io.github.metetv2021cloud.sidestep WRITE_SETTINGS allow
+  shell appops set io.github.metetv2021cloud.sidestep ACTIVATE_VPN allow
 ```
 
 ## Инструкция для Android 9
@@ -80,9 +80,9 @@
 - На вкладке **Консоль** выполните:
 
 ```
-  pm grant io.github.romanvht.byedpi android.permission.WRITE_SECURE_SETTINGS
-  appops set io.github.romanvht.byedpi WRITE_SETTINGS allow
-  appops set io.github.romanvht.byedpi ACTIVATE_VPN allow
+  pm grant io.github.metetv2021cloud.sidestep android.permission.WRITE_SECURE_SETTINGS
+  appops set io.github.metetv2021cloud.sidestep WRITE_SETTINGS allow
+  appops set io.github.metetv2021cloud.sidestep ACTIVATE_VPN allow
 ```
 
 ### 2Б. Через компьютер
@@ -92,9 +92,9 @@
 - На вкладке **Консоль** выполните:
 
 ```
-  shell pm grant io.github.romanvht.byedpi android.permission.WRITE_SECURE_SETTINGS
-  shell appops set io.github.romanvht.byedpi WRITE_SETTINGS allow
-  shell appops set io.github.romanvht.byedpi ACTIVATE_VPN allow
+  shell pm grant io.github.metetv2021cloud.sidestep android.permission.WRITE_SECURE_SETTINGS
+  shell appops set io.github.metetv2021cloud.sidestep WRITE_SETTINGS allow
+  shell appops set io.github.metetv2021cloud.sidestep ACTIVATE_VPN allow
 ```
 
 # Решение проблем
@@ -113,13 +113,12 @@
 
 # Альтернативный метод для YouTube
 
-## 1. Настройка ByeByeDPI
+## 1. Настройка Sidestep
 
-- В ByeByeDPI:
-  - Настройки (шестеренка справа вверху)
-    - Режим : *Proxy*
-    - Порт: *1080*
-  - На главном экране нажмите большую кнопку **Старт**
+- В Sidestep:
+  - На главном экране нажмите **Режим** и выберите **Прокси**
+  - Порт по умолчанию — *1080* (его можно изменить в **Настройки → Адрес прокси → Порт**)
+  - Нажмите большую кнопку **Подключить**
 
 ## 2. Настройка SmartTube
 

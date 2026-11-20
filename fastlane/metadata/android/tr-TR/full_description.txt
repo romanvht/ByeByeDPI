@@ -1,0 +1,17 @@
+<p><i>Sidestep</i>, internet sağlayıcınızın DPI (derin paket incelemesi) ile engellediği siteleri ve uygulamaları açar. <a href='https://github.com/hufrea/byedpi' target='_blank' rel='nofollow noopener'>ByeDPI</a>’yi cihazınızda çalıştırır ve trafiğinizi onun üzerinden geçirir.</p>
+<p>Sidestep bir VPN hizmeti değildir. Trafiği cihaz içinde yönlendirmek için Android’in VPN özelliğini kullanır, ancak hiçbir veriyi uzak bir sunucuya göndermez. Trafiğinizi şifrelemez ve IP adresinizi gizlemez.</p>
+<p>
+<b>Özellikler</b><br>
+* Bağlanmak için tek düğme, anlaşılır durum ve ipuçları<br>
+* Strateji bulucu: hazır stratejileri ağınızda dener, puanlar ve en iyisini tek dokunuşla uygular<br>
+* Ana ekrandan değiştirebileceğiniz, sabitleyip yeniden adlandırabileceğiniz kayıtlı stratejiler<br>
+* Engellenen uygulamalar: ülkenizi anlar, orada engellenen uygulamaları listeler ve her dosyanın geliştiricinin kendi imzasını taşıdığını denetleyerek tek dokunuşla yükler<br>
+* Görsel düzenleyici veya uzmanlar için ByeDPI komut satırı argümanları<br>
+* Tüm uygulamalar, seçtikleriniz dışındakiler veya yalnızca seçtikleriniz için VPN modu<br>
+* Tek tek uygulamalar için yerel SOCKS5 proxy modu<br>
+* Cihaz açıldığında başlar; hızlı ayarlar kutucuğu ve kısayollar<br>
+* Android TV ve TV kutularında çalışır<br>
+* 18 dil, açık ve koyu tema, Android 12+ sürümlerinde duvar kâğıdınızdan gelen renkler<br>
+* Ayarları içe ve dışa aktarma (ByeByeDPI yedekleri de çalışır)<br>
+</p>
+<p>Sidestep, romanvht’nin geliştirdiği <a href='https://github.com/romanvht/ByeByeDPI' target='_blank' rel='nofollow noopener'>ByeByeDPI</a> uygulamasının yeniden tasarlanmış bir çatalıdır.</p>

@@ -1,5 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from seed #0E9F8E (Material 3 tonal spot). -->
 <resources>
-    <color name="icon_color">#0B4680</color>
-    <color name="green_active">#4CAF50</color>
+    <!-- Brand colors (launcher icon, logo, TV banner). Same in light and dark mode. -->
+    <color name="brand_gradient_start">#18B9A2</color>
+    <color name="brand_gradient_end">#04695E</color>
+    <!-- Status bar on Android 5.x, where status bar icons are always light. -->
+    <color name="legacy_status_bar">#005047</color>
+
+    <!-- Material 3 color scheme -->
+    <color name="md_primary">#006B5F</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#9FF2E2</color>
+    <color name="md_on_primary_container">#005047</color>
+    <color name="md_inverse_primary">#83D5C6</color>
+    <color name="md_secondary">#4A635E</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#CDE8E1</color>
+    <color name="md_on_secondary_container">#334B47</color>
+    <color name="md_tertiary">#456179</color>
+    <color name="md_on_tertiary">#FFFFFF</color>
+    <color name="md_tertiary_container">#CBE6FF</color>
+    <color name="md_on_tertiary_container">#2C4A60</color>
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+    <color name="md_error_container">#FFDAD6</color>
+    <color name="md_on_error_container">#93000A</color>
+    <color name="md_background">#F4FBF8</color>
+    <color name="md_on_background">#171D1B</color>
+    <color name="md_surface">#F4FBF8</color>
+    <color name="md_on_surface">#171D1B</color>
+    <color name="md_surface_variant">#DAE5E1</color>
+    <color name="md_on_surface_variant">#3F4946</color>
+    <color name="md_outline">#6F7976</color>
+    <color name="md_outline_variant">#BEC9C5</color>
+    <color name="md_inverse_surface">#2B3230</color>
+    <color name="md_inverse_on_surface">#ECF2EF</color>
+    <color name="md_surface_dim">#D5DBD9</color>
+    <color name="md_surface_bright">#F4FBF8</color>
+    <color name="md_surface_container_lowest">#FFFFFF</color>
+    <color name="md_surface_container_low">#EFF5F2</color>
+    <color name="md_surface_container">#E9EFEC</color>
+    <color name="md_surface_container_high">#E3EAE7</color>
+    <color name="md_surface_container_highest">#DDE4E1</color>
+    <color name="md_primary_fixed">#9FF2E2</color>
+    <color name="md_primary_fixed_dim">#83D5C6</color>
+    <color name="md_on_primary_fixed">#00201C</color>
+    <color name="md_on_primary_fixed_variant">#005047</color>
+    <color name="md_secondary_fixed">#CDE8E1</color>
+    <color name="md_secondary_fixed_dim">#B1CCC6</color>
+    <color name="md_on_secondary_fixed">#06201C</color>
+    <color name="md_on_secondary_fixed_variant">#334B47</color>
+    <color name="md_tertiary_fixed">#CBE6FF</color>
+    <color name="md_tertiary_fixed_dim">#ACCAE5</color>
+    <color name="md_on_tertiary_fixed">#001E30</color>
+    <color name="md_on_tertiary_fixed_variant">#2C4A60</color>
+    <color name="md_success">#006C47</color>
+    <color name="md_success_container">#7BFABB</color>
+    <color name="md_on_success_container">#002112</color>
+    <color name="md_warning">#705D00</color>
+    <color name="md_warning_container">#FFE170</color>
+    <color name="md_on_warning_container">#221B00</color>
 </resources>

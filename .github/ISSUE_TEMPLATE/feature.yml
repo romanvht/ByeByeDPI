@@ -1,7 +1,6 @@
 name: Feature request / Предложить новую функциональность
 description: Suggest an idea for this project / Предложить идею для проекта
 labels: [ enhancement ]
-assignees: romanvht
 body:
   - type: textarea
     id: problem

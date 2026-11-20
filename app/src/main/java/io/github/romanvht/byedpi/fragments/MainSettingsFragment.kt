@@ -3,21 +3,23 @@ package io.github.romanvht.byedpi.fragments
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import androidx.appcompat.app.AlertDialog
+import android.widget.Toast
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.preference.*
-import io.github.romanvht.byedpi.R
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.romanvht.byedpi.BuildConfig
+import io.github.romanvht.byedpi.R
+import io.github.romanvht.byedpi.activities.SettingsActivity
 import io.github.romanvht.byedpi.activities.TestActivity
 import io.github.romanvht.byedpi.data.Mode
 import io.github.romanvht.byedpi.data.PrivateDnsState
 import io.github.romanvht.byedpi.utility.*
-import androidx.core.net.toUri
 
 class MainSettingsFragment : PreferenceFragmentCompat() {
     companion object {
-        private val TAG: String = MainSettingsFragment::class.java.simpleName
+        const val BYEDPI_VERSION = "0.17.3 (ba53229)"
     }
 
     private val preferenceListener =
@@ -32,11 +34,17 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         setEditTestPreferenceListenerPort("byedpi_proxy_port")
         setEditTextPreferenceListener("dns_ip") { it.isBlank() || checkNotLocalIp(it) }
 
-        findPreferenceNotNull<ListPreference>("language")
-            .setOnPreferenceChangeListener { _, newValue ->
+        findPreferenceNotNull<ListPreference>("language").apply {
+            entries = (listOf(getString(R.string.language_system)) + SettingsUtils.languages.map { it.second }).toTypedArray()
+            entryValues = (listOf("system") + SettingsUtils.languages.map { it.first }).toTypedArray()
+            summaryProvider = Preference.SummaryProvider<ListPreference> { preference ->
+                SettingsUtils.languageName(requireContext(), preference.value ?: "system")
+            }
+            setOnPreferenceChangeListener { _, newValue ->
                 SettingsUtils.setLang(newValue as String)
                 true
             }
+        }
 
         findPreferenceNotNull<ListPreference>("app_theme")
             .setOnPreferenceChangeListener { _, newValue ->
@@ -44,10 +52,26 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
+        findPreferenceNotNull<SwitchPreference>("dynamic_colors").apply {
+            isVisible = DynamicColors.isDynamicColorAvailable()
+            setOnPreferenceChangeListener { _, _ ->
+                // Apply the new colors once the value is saved
+                listView?.post { activity?.recreate() }
+                true
+            }
+        }
+
+        findPreferenceNotNull<ListPreference>("byedpi_mode").summaryProvider =
+            Preference.SummaryProvider<ListPreference> { preference ->
+                when (Mode.fromStringOrNull(preference.value ?: "vpn") ?: Mode.VPN) {
+                    Mode.VPN -> getString(R.string.mode_vpn_summary)
+                    Mode.Proxy -> getString(R.string.mode_proxy_settings_summary)
+                }
+            }
+
         findPreferenceNotNull<Preference>("proxy_test")
             .setOnPreferenceClickListener {
-                val intent = Intent(context, TestActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(context, TestActivity::class.java))
                 true
             }
 
@@ -60,12 +84,6 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         findPreferenceNotNull<Preference>("storage_access")
             .setOnPreferenceClickListener {
                 PermissionUtils.requestStorageAccess(this)
-                true
-            }
-
-        findPreferenceNotNull<Preference>("donate")
-            .setOnPreferenceClickListener {
-                showDonateDialog()
                 true
             }
 
@@ -86,14 +104,45 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
                 true
             }
 
-        findPreferenceNotNull<Preference>("version").summary = BuildConfig.VERSION_NAME
-        findPreferenceNotNull<Preference>("byedpi_version").summary = "0.17.3 (ba53229)"
+        findPreferenceNotNull<Preference>("export_settings").setOnPreferenceClickListener {
+            (activity as? SettingsActivity)?.exportSettings()
+            true
+        }
+
+        findPreferenceNotNull<Preference>("import_settings").setOnPreferenceClickListener {
+            (activity as? SettingsActivity)?.importSettings()
+            true
+        }
+
+        findPreferenceNotNull<Preference>("reset_settings").setOnPreferenceClickListener {
+            confirmReset()
+            true
+        }
+
+        findPreferenceNotNull<Preference>("source_code").setOnPreferenceClickListener {
+            openUrl(getString(R.string.source_code_url))
+            true
+        }
+
+        findPreferenceNotNull<Preference>("documentation").setOnPreferenceClickListener {
+            openUrl(getString(R.string.byedpi_docs))
+            true
+        }
+
+        findPreferenceNotNull<Preference>("credits").setOnPreferenceClickListener {
+            showCredits()
+            true
+        }
+
+        findPreferenceNotNull<Preference>("version").summary = getString(R.string.version_summary, BuildConfig.VERSION_NAME)
+        findPreferenceNotNull<Preference>("byedpi_version").summary = BYEDPI_VERSION
 
         updatePreferences()
     }
 
     override fun onResume() {
         super.onResume()
+        requireActivity().setTitle(R.string.title_settings)
         sharedPreferences?.registerOnSharedPreferenceChangeListener(preferenceListener)
         updatePreferences()
     }
@@ -104,12 +153,12 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updatePreferences() {
+        val context = context ?: return
         val cmdEnable = findPreferenceNotNull<SwitchPreference>("byedpi_enable_cmd_settings").isChecked
-        val mode = findPreferenceNotNull<ListPreference>("byedpi_mode").value.let { Mode.fromString(it) }
+        val mode = Mode.fromStringOrNull(findPreferenceNotNull<ListPreference>("byedpi_mode").value ?: "vpn") ?: Mode.VPN
         val dns = findPreferenceNotNull<Preference>("dns_ip_picker")
-        val dnsEdit = findPreferenceNotNull<EditTextPreference>("dns_ip")
         val privateDns = findPreferenceNotNull<Preference>("private_dns")
-        val privateDnsState = PrivateDnsUtils.getState(requireContext())
+        val privateDnsState = PrivateDnsUtils.getState(context)
         val ipv6 = findPreferenceNotNull<SwitchPreference>("ipv6_enable")
         val proxy = findPreferenceNotNull<PreferenceCategory>("byedpi_proxy_category")
 
@@ -120,8 +169,8 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
 
         val uiSettings = findPreferenceNotNull<Preference>("byedpi_ui_settings")
         val cmdSettings = findPreferenceNotNull<Preference>("byedpi_cmd_settings")
-        val proxyTest = findPreferenceNotNull<Preference>("proxy_test")
 
+        // The listening address can also be set in the command line; then these fields are ignored
         if (cmdEnable) {
             val (cmdIp, cmdPort) = sharedPreferences?.checkIpAndPortInCmd() ?: Pair(null, null)
             proxy.isVisible = cmdIp == null && cmdPort == null
@@ -131,54 +180,33 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
 
         uiSettings.isEnabled = !cmdEnable
         cmdSettings.isEnabled = cmdEnable
-        proxyTest.isEnabled = cmdEnable
 
         dns.summary = dnsSummary()
-        dnsEdit.isVisible = false
         privateDns.summary = (privateDnsState as? PrivateDnsState.Configured)?.hostname
         privateDns.isVisible = mode == Mode.VPN && privateDnsState is PrivateDnsState.Configured
 
-        when (mode) {
-            Mode.VPN -> {
-                dns.isVisible = privateDnsState !is PrivateDnsState.Configured
-                ipv6.isVisible = true
+        val vpn = mode == Mode.VPN
+        dns.isVisible = vpn && privateDnsState !is PrivateDnsState.Configured
+        ipv6.isVisible = vpn
+        applistType.isVisible = vpn
+        selectedApps.isVisible = vpn && applistType.value in setOf("blacklist", "whitelist")
 
-                when (applistType.value) {
-                    "disable" -> {
-                        applistType.isVisible = true
-                        selectedApps.isVisible = false
-                    }
-                    "blacklist", "whitelist" -> {
-                        applistType.isVisible = true
-                        selectedApps.isVisible = true
-                    }
-                    else -> {
-                        applistType.isVisible = true
-                        selectedApps.isVisible = false
-                        Log.w(TAG, "Unexpected applistType value: ${applistType.value}")
-                    }
-                }
-            }
-
-            Mode.Proxy -> {
-                dns.isVisible = false
-                ipv6.isVisible = false
-                applistType.isVisible = false
-                selectedApps.isVisible = false
-            }
-        }
-
-        if (PermissionUtils.isBatteryOptimizationDisabled(requireContext())) {
-            batteryOptimization.summary = getString(R.string.battery_optimization_disabled_summary)
+        val appCount = sharedPreferences?.getSelectedApps()?.size ?: 0
+        selectedApps.summary = if (appCount == 0) {
+            getString(R.string.apps_select_none)
         } else {
-            batteryOptimization.summary = getString(R.string.battery_optimization_summary)
+            resources.getQuantityString(R.plurals.apps_selected, appCount, appCount)
         }
 
-        if (PermissionUtils.hasStorageAccess(requireContext())) {
-            storageAccess.summary = getString(R.string.storage_access_allowed_summary)
-        } else {
-            storageAccess.summary = getString(R.string.storage_access_summary)
-        }
+        batteryOptimization.summary = getString(
+            if (PermissionUtils.isBatteryOptimizationDisabled(context)) R.string.battery_optimization_disabled_summary
+            else R.string.battery_optimization_summary
+        )
+
+        storageAccess.summary = getString(
+            if (PermissionUtils.hasStorageAccess(context)) R.string.storage_access_allowed_summary
+            else R.string.storage_access_summary
+        )
     }
 
     private val dnsPresets: List<Pair<String, String>>
@@ -197,15 +225,17 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun showDnsDialog() {
-        val context = requireContext()
         val presets = dnsPresets
-
-        val items = (presets.map { it.second } + getString(R.string.dns_custom)).toTypedArray()
+        val current = sharedPreferences?.getStringNotNull("dns_ip", "1.1.1.1") ?: "1.1.1.1"
+        val items = (presets.map { if (it.first.isBlank()) it.second else "${it.second} (${it.first})" } +
+            getString(R.string.dns_custom)).toTypedArray()
+        val checked = presets.indexOfFirst { it.first == current }.let { if (it == -1) presets.size else it }
         val dnsPref = findPreferenceNotNull<EditTextPreference>("dns_ip")
 
-        AlertDialog.Builder(context)
-            .setTitle(getString(R.string.dbs_ip_setting))
-            .setItems(items) { _, which ->
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.dbs_ip_setting)
+            .setSingleChoiceItems(items, checked) { dialog, which ->
+                dialog.dismiss()
                 if (which < presets.size) {
                     sharedPreferences?.edit { putString("dns_ip", presets[which].first) }
                 } else {
@@ -216,32 +246,38 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
             .show()
     }
 
-    private fun showDonateDialog() {
-        val context = requireContext()
-
-        val items = arrayOf(
-            getString(R.string.donate_message),
-            getString(R.string.donate_cloudtips),
-            getString(R.string.donate_boosty),
-            getString(R.string.donate_telegram_bot),
-            getString(R.string.donate_thanks),
-        )
-
-        AlertDialog.Builder(context)
-            .setTitle(getString(R.string.donate))
-            .setItems(items) { _, which ->
-                when (which) {
-                    1 -> openUrl("https://pay.cloudtips.ru/p/92c754db")
-                    2 -> openUrl("https://boosty.to/romanvht/donate")
-                    3 -> openUrl("https://t.me/romanvht_donate_bot")
-                }
+    private fun confirmReset() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.reset_settings)
+            .setMessage(R.string.reset_settings_confirm)
+            .setPositiveButton(R.string.action_reset) { _, _ ->
+                (activity as? SettingsActivity)?.resetSettings()
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
+    private fun showCredits() {
+        val projects = listOf(
+            "ByeDPI — hufrea" to "https://github.com/hufrea/byedpi",
+            "hev-socks5-tunnel — heiher" to "https://github.com/heiher/hev-socks5-tunnel",
+            "ByeByeDPI — romanvht" to "https://github.com/romanvht/ByeByeDPI",
+            "ByeDPIAndroid — dovecoteescapee" to "https://github.com/dovecoteescapee/ByeDPIAndroid",
+            getString(R.string.credits_license) to "https://www.gnu.org/licenses/gpl-3.0.html",
+        )
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.credits_title, getString(R.string.app_name)))
+            .setItems(projects.map { it.first }.toTypedArray()) { _, which -> openUrl(projects[which].second) }
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
     private fun openUrl(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-        startActivity(intent)
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        } catch (_: Exception) {
+            Toast.makeText(requireContext(), R.string.no_browser, Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -98,7 +98,7 @@ class ByeDpiVpnService : VpnService() {
     private fun createTunnel(configuration: Configuration): ParcelFileDescriptor {
         Log.d(TAG, "DNS: ${configuration.dns}")
         val builder = Builder()
-        builder.setSession("ByeDPI")
+        builder.setSession(getString(R.string.app_name))
         builder.setConfigureIntent(
             PendingIntent.getActivity(
                 this,
@@ -130,7 +130,7 @@ class ByeDpiVpnService : VpnService() {
                     try {
                         builder.addDisallowedApplication(packageName)
                     } catch (e: Exception) {
-                        Log.e(TAG, "Не удалось добавить приложение $packageName в черный список", e)
+                        Log.e(TAG, "Could not exclude app $packageName from the VPN", e)
                     }
                 }
 
@@ -142,7 +142,7 @@ class ByeDpiVpnService : VpnService() {
                     try {
                         builder.addAllowedApplication(packageName)
                     } catch (e: Exception) {
-                        Log.e(TAG, "Не удалось добавить приложение $packageName в белый список", e)
+                        Log.e(TAG, "Could not add app $packageName to the VPN", e)
                     }
                 }
             }

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="start"
-        android:maxLines="1"
+        android:singleLine="true"
         android:paddingStart="16dp"
         android:paddingTop="12dp"
         android:paddingEnd="16dp"
@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/file_name"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:maxLines="1" />
 

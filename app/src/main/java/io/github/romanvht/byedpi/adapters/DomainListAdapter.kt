@@ -3,13 +3,13 @@ package io.github.romanvht.byedpi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.data.DomainList
 
@@ -47,18 +47,21 @@ class DomainListAdapter(
 
     class DomainListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameText: TextView = itemView.findViewById(R.id.list_name)
-        private val countText: TextView = itemView.findViewById(R.id.list_count)
-        val checkbox: CheckBox = itemView.findViewById(R.id.list_checkbox)
+        private val sizeText: TextView = itemView.findViewById(R.id.list_size)
+        private val domainsText: TextView = itemView.findViewById(R.id.list_count)
+        val checkbox: CompoundButton = itemView.findViewById(R.id.list_checkbox)
         val contentLayout: LinearLayout = itemView.findViewById(R.id.list_content)
 
         fun bind(domainList: DomainList) {
+            val resources = itemView.resources
             nameText.text = domainList.name
+            sizeText.text = resources.getQuantityString(R.plurals.domain_count, domainList.domains.size, domainList.domains.size)
 
-            val domains = domainList.domains.take(5).joinToString("\n")
-            val summary = if (domainList.domains.size > 5) "$domains\n..." else domains
-            countText.text = summary
+            val preview = domainList.domains.take(3).joinToString("\n")
+            domainsText.text = if (domainList.domains.size > 3) "$preview\n…" else preview
 
             checkbox.isChecked = domainList.isActive
+            checkbox.contentDescription = resources.getString(R.string.domain_list_use_in_test, domainList.name)
         }
 
         fun showActionDialog(
@@ -69,20 +72,30 @@ class DomainListAdapter(
         ) {
             val context = itemView.context
             val options = arrayOf(
-                context.getString(R.string.domain_list_edit),
-                context.getString(R.string.cmd_history_copy),
-                context.getString(R.string.domain_list_delete)
+                context.getString(R.string.action_edit),
+                context.getString(R.string.action_copy),
+                context.getString(R.string.action_delete)
             )
 
-            AlertDialog.Builder(context, R.style.CustomAlertDialog)
+            MaterialAlertDialogBuilder(context)
                 .setTitle(domainList.name)
                 .setItems(options) { _, which ->
                     when (which) {
                         0 -> onEdit(domainList)
                         1 -> onCopy(domainList)
-                        2 -> onDelete(domainList)
+                        2 -> confirmDelete(domainList, onDelete)
                     }
                 }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
+
+        private fun confirmDelete(domainList: DomainList, onDelete: (DomainList) -> Unit) {
+            val context = itemView.context
+            MaterialAlertDialogBuilder(context)
+                .setTitle(context.getString(R.string.domain_list_delete_confirm, domainList.name))
+                .setMessage(if (domainList.isBuiltIn) R.string.domain_list_delete_builtin_hint else R.string.action_cannot_undo)
+                .setPositiveButton(R.string.action_delete) { _, _ -> onDelete(domainList) }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
         }

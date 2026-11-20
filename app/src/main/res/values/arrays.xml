@@ -1,78 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Labels point to strings, so only strings.xml needs to be translated. -->
 <resources>
-    <array name="languages">
-        <item name="system">Автоматически</item>
-        <item name="ru">Русский</item>
-        <item name="en">English</item>
-        <item name="tr">Türkçe</item>
-        <item name="kk">Қазақша</item>
-        <item name="vi">Tiếng Việt</item>
-    </array>
-    <array name="languages_entries">
-        <item name="system">system</item>
-        <item name="ru">ru</item>
-        <item name="en">en</item>
-        <item name="tr">tr</item>
-        <item name="kk">kk</item>
-        <item name="vi">vi</item>
-    </array>
+    <string-array name="themes">
+        <item>@string/theme_system</item>
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
+    </string-array>
+    <string-array name="themes_entries" translatable="false">
+        <item>system</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
 
-    <array name="themes">
-        <item name="system">Системная</item>
-        <item name="light">Светлая</item>
-        <item name="dark">Темная</item>
-    </array>
-    <array name="themes_entries">
-        <item name="system">system</item>
-        <item name="light">light</item>
-        <item name="dark">dark</item>
-    </array>
+    <string-array name="byedpi_modes">
+        <item>@string/mode_vpn</item>
+        <item>@string/mode_proxy</item>
+    </string-array>
+    <string-array name="byedpi_modes_entries" translatable="false">
+        <item>vpn</item>
+        <item>proxy</item>
+    </string-array>
 
-    <array name="byedpi_modes">
-        <item name="vpn">VPN</item>
-        <item name="proxy">Proxy</item>
-    </array>
-    <array name="byedpi_modes_entries">
-        <item name="vpn">vpn</item>
-        <item name="proxy">proxy</item>
-    </array>
+    <!-- ByeDPI method names are kept in English everywhere, like in its documentation -->
+    <string-array name="byedpi_desync_methods" translatable="false">
+        <item>None</item>
+        <item>Split</item>
+        <item>Disorder</item>
+        <item>Fake</item>
+        <item>Out-of-band</item>
+        <item>Disordered out-of-band</item>
+    </string-array>
+    <string-array name="byedpi_desync_methods_entries" translatable="false">
+        <item>none</item>
+        <item>split</item>
+        <item>disorder</item>
+        <item>fake</item>
+        <item>oob</item>
+        <item>disoob</item>
+    </string-array>
 
-    <array name="byedpi_desync_methods">
-        <item name="none">None</item>
-        <item name="split">Split</item>
-        <item name="disorder">Disorder</item>
-        <item name="fake">Fake</item>
-        <item name="oob">Out-of-band</item>
-        <item name="oob">Disordered out-of-band</item>
-    </array>
-    <array name="byedpi_desync_methods_entries">
-        <item name="none">none</item>
-        <item name="split">split</item>
-        <item name="disorder">disorder</item>
-        <item name="fake">fake</item>
-        <item name="oob">oob</item>
-        <item name="oob">disoob</item>
-    </array>
+    <string-array name="byedpi_hosts_modes">
+        <item>@string/hosts_mode_off</item>
+        <item>@string/hosts_mode_blacklist</item>
+        <item>@string/hosts_mode_whitelist</item>
+    </string-array>
+    <string-array name="byedpi_hosts_modes_entries" translatable="false">
+        <item>disable</item>
+        <item>blacklist</item>
+        <item>whitelist</item>
+    </string-array>
 
-    <array name="byedpi_hosts_modes">
-        <item name="disable">Нет</item>
-        <item name="blacklist">Черный список</item>
-        <item name="whitelist">Белый список</item>
-    </array>
-    <array name="byedpi_hosts_modes_entries">
-        <item name="disable">disable</item>
-        <item name="blacklist">blacklist</item>
-        <item name="whitelist">whitelist</item>
-    </array>
-
-    <array name="applist_types">
-        <item name="disable">Нет</item>
-        <item name="blacklist">Черный список</item>
-        <item name="whitelist">Белый список</item>
-    </array>
-    <array name="applist_types_entries">
-        <item name="disable">disable</item>
-        <item name="blacklist">blacklist</item>
-        <item name="whitelist">whitelist</item>
-    </array>
+    <string-array name="applist_types">
+        <item>@string/applist_all</item>
+        <item>@string/applist_except</item>
+        <item>@string/applist_only</item>
+    </string-array>
+    <string-array name="applist_types_entries" translatable="false">
+        <item>disable</item>
+        <item>blacklist</item>
+        <item>whitelist</item>
+    </string-array>
 </resources>

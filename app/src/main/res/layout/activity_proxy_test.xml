@@ -1,66 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activities.TestActivity">
 
     <include layout="@layout/app_toolbar" />
 
-    <LinearLayout
+    <io.github.romanvht.byedpi.views.MaxWidthLinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="?android:attr/colorBackground">
+        android:maxWidth="@dimen/content_max_width"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="16dp"
-            android:paddingBottom="12dp">
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/status_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="Testing strategy 3 of 40" />
+
+            <TextView
+                android:id="@+id/hint_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="Sites to check: YouTube, Googlevideo" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/test_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                app:trackCornerRadius="4dp"
+                app:trackThickness="6dp"
+                tools:progress="30"
+                tools:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/startStopButton"
-                android:layout_width="wrap_content"
-                android:layout_height="42dp"
-                android:layout_gravity="center_horizontal"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingLeft="10pt"
-                android:paddingRight="10pt"
-                android:textAllCaps="true"
-                android:focusable="true"
-                app:strokeWidth="0dp"
-                android:text="@string/test_start" />
-
-            <TextView
-                android:id="@+id/progressTextView"
+                style="@style/Widget.Material3.Button.Icon"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:paddingTop="6dp"/>
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/test_start"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                app:icon="@drawable/ic_speed" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/strategiesRecyclerView"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingTop="0dp"
-            android:paddingBottom="4dp" />
+            android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/disclaimerTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/test_disclaimer"
-            android:textSize="12sp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/strategiesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="16dp" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <FrameLayout
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_icon_circle">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_speed"
+                        app:tint="?attr/colorOnSecondaryContainer" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/disclaimerTextView"
+                    android:breakStrategy="balanced"
+                    tools:targetApi="m"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/test_intro"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+        </FrameLayout>
+    </io.github.romanvht.byedpi.views.MaxWidthLinearLayout>
 
 </LinearLayout>

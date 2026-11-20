@@ -1,7 +1,16 @@
 package io.github.romanvht.byedpi.fragments
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.preference.*
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.data.UISettings
@@ -50,8 +59,28 @@ class ByeDpiUISettingsFragment : PreferenceFragmentCompat() {
         updatePreferences()
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_editor, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                if (menuItem.itemId != R.id.action_help) return false
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.byedpi_docs).toUri()))
+                } catch (_: Exception) {
+                    Toast.makeText(requireContext(), R.string.no_browser, Toast.LENGTH_SHORT).show()
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
     override fun onResume() {
         super.onResume()
+        requireActivity().setTitle(R.string.ui_editor)
         sharedPreferences?.registerOnSharedPreferenceChangeListener(preferenceListener)
     }
 
@@ -61,8 +90,10 @@ class ByeDpiUISettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun updatePreferences() {
-        val desyncMethod = findPreferenceNotNull<ListPreference>("byedpi_desync_method").value.let { UISettings.DesyncMethod.fromName(it) }
-        val hostsMode = findPreferenceNotNull<ListPreference>("byedpi_hosts_mode").value.let { UISettings.HostsMode.fromName(it) }
+        val desyncMethod = findPreferenceNotNull<ListPreference>("byedpi_desync_method").value
+            ?.let { UISettings.DesyncMethod.fromNameOrNull(it) } ?: OOB
+        val hostsMode = findPreferenceNotNull<ListPreference>("byedpi_hosts_mode").value
+            ?.let { UISettings.HostsMode.fromNameOrNull(it) } ?: Disable
 
         val hostsBlacklist = findPreferenceNotNull<EditTextPreference>("byedpi_hosts_blacklist")
         val hostsWhitelist = findPreferenceNotNull<EditTextPreference>("byedpi_hosts_whitelist")

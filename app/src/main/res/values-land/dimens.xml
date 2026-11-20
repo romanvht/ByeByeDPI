@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="connect_frame_size">188dp</dimen>
+    <dimen name="connect_halo_size">164dp</dimen>
+    <dimen name="connect_progress_size">152dp</dimen>
+    <dimen name="connect_button_size">136dp</dimen>
+    <dimen name="connect_button_radius">68dp</dimen>
+    <dimen name="connect_icon_size">56dp</dimen>
+</resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Downloaded apps are handed to Android's installer from this folder -->
+<paths>
+    <cache-path name="apks" path="apks/" />
+</paths>

@@ -14,6 +14,11 @@
     <init>();
 }
 
+# Custom views and preferences are created from XML by class name
+-keep class io.github.romanvht.byedpi.views.** {
+    <init>(...);
+}
+
 -keep,allowoptimization class io.github.romanvht.byedpi.data.** {
     <fields>;
 }

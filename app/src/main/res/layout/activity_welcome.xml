@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.WelcomeActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fadingEdgeLength="32dp"
+        android:fillViewport="true"
+        android:requiresFadingEdge="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <io.github.romanvht.byedpi.views.MaxWidthLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:maxWidth="@dimen/content_max_width"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingTop="40dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_brand_logo" />
+
+                <TextView
+                    android:id="@+id/welcome_title"
+                    android:breakStrategy="balanced"
+                    tools:targetApi="m"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                    android:textColor="?attr/colorOnSurface"
+                    tools:text="Welcome to Sidestep" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:breakStrategy="balanced"
+                    tools:targetApi="m"
+                    android:text="@string/welcome_text"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.App.Card.Group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
+
+                        <include
+                            android:id="@+id/feature_local"
+                            layout="@layout/item_feature_row" />
+
+                        <include
+                            android:id="@+id/feature_not_vpn"
+                            layout="@layout/item_feature_row" />
+
+                        <include
+                            android:id="@+id/feature_strategy"
+                            layout="@layout/item_feature_row" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </io.github.romanvht.byedpi.views.MaxWidthLinearLayout>
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <io.github.romanvht.byedpi.views.MaxWidthLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:maxWidth="@dimen/content_max_width"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/language_button"
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:icon="@drawable/ic_language"
+            tools:text="English" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/start_button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/welcome_start"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+    </io.github.romanvht.byedpi.views.MaxWidthLinearLayout>
+
+</LinearLayout>

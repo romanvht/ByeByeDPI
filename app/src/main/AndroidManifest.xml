@@ -16,6 +16,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="AllFilesAccessPolicy,ScopedStorage" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
+    <!-- Installing apps that are blocked or missing from Google Play; Android asks the user every time -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
@@ -29,7 +31,8 @@
         android:banner="@mipmap/ic_banner"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ByeDPI"
+        android:theme="@style/Theme.App"
+        android:localeConfig="@xml/locales_config"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="34">
 
@@ -44,6 +47,29 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.WelcomeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.BlockedAppsActivity"
+            android:exported="false" />
+
+        <!-- Results of installing split bundles from the blocked apps screen -->
+        <receiver
+            android:name=".receiver.InstallResultReceiver"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.apks"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/apk_paths" />
+        </provider>
 
         <activity
             android:name=".activities.ToggleActivity"

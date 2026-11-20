@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/title"
+    style="@style/Widget.App.SectionHeader"
+    android:accessibilityHeading="true"
+    tools:targetApi="p"
+    tools:text="Blocked in Türkiye" />

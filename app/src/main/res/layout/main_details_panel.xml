@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Current setup (mode + strategy) and the main tools -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/Widget.App.SectionHeader"
+        android:text="@string/main_section_connection" />
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.App.Card.Group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/mode_row"
+                layout="@layout/item_main_row" />
+
+            <include
+                android:id="@+id/strategy_row"
+                layout="@layout/item_main_row" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        style="@style/Widget.App.SectionHeader"
+        android:text="@string/main_section_tools" />
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.App.Card.Group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/action_find_strategy"
+                layout="@layout/item_main_row" />
+
+            <include
+                android:id="@+id/action_blocked_apps"
+                layout="@layout/item_main_row" />
+
+            <include
+                android:id="@+id/action_editor"
+                layout="@layout/item_main_row" />
+
+            <include
+                android:id="@+id/action_settings"
+                layout="@layout/item_main_row" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

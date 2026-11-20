@@ -1,0 +1,10 @@
+Yeni ad ve yeni görünüm: Sidestep
+* Tek bağlantı düğmesiyle daha sade ana ekran
+* Karşılama ekranı ve anlaşılır ipuçları
+* Strateji bulucu her stratejiyi puanlar ve tek dokunuşla uygular
+* Kayıtlı stratejileri ana ekrandan değiştirme
+* Engellenen uygulamalar: ülkenizde engellenenleri görün ve yükleyin
+* Ayarlar bağlıyken de değiştirilebilir
+* 18 dil, varsayılan olarak İngilizce
+* Duvar kâğıdından gelen renkler ve yeni simge
+* Birçok düzeltme

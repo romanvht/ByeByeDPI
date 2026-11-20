@@ -1,17 +1,22 @@
 package io.github.romanvht.byedpi.fragments
 
+import android.content.Intent
+import android.graphics.Typeface
 import android.net.VpnService
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.core.text.BidiFormatter
+import androidx.core.text.TextDirectionHeuristicsCompat
 import androidx.preference.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.romanvht.byedpi.R
-import io.github.romanvht.byedpi.utility.findPreferenceNotNull
-import androidx.appcompat.app.AlertDialog
 import io.github.romanvht.byedpi.data.AppStatus
 import io.github.romanvht.byedpi.data.Command
 import io.github.romanvht.byedpi.data.Mode
@@ -19,15 +24,17 @@ import io.github.romanvht.byedpi.services.ServiceManager
 import io.github.romanvht.byedpi.services.appStatus
 import io.github.romanvht.byedpi.utility.ClipboardUtils
 import io.github.romanvht.byedpi.utility.HistoryUtils
+import io.github.romanvht.byedpi.utility.findPreferenceNotNull
 import io.github.romanvht.byedpi.utility.getCmdArgs
 import io.github.romanvht.byedpi.utility.getPreferences
 import io.github.romanvht.byedpi.utility.mode
+import io.github.romanvht.byedpi.views.BindablePreference
 
 class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
 
     private lateinit var cmdHistoryUtils: HistoryUtils
     private lateinit var editTextPreference: EditTextPreference
-    private lateinit var historyHeader: Preference
+    private lateinit var historyHeader: BindablePreference
     private val historyPreferences = mutableListOf<Preference>()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -37,7 +44,21 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
 
         editTextPreference = findPreferenceNotNull("byedpi_cmd_args")
         editTextPreference.text = requireContext().getPreferences().getCmdArgs()
-        historyHeader = findPreferenceNotNull("cmd_history_header")
+        editTextPreference.summaryProvider = Preference.SummaryProvider<EditTextPreference> { preference ->
+            val text = preference.text
+            if (text.isNullOrBlank()) {
+                getString(R.string.main_strategy_empty)
+            } else {
+                BidiFormatter.getInstance().unicodeWrap(text, TextDirectionHeuristicsCompat.LTR)
+            }
+        }
+        editTextPreference.setOnBindEditTextListener { editText ->
+            editText.typeface = Typeface.MONOSPACE
+            editText.textDirection = View.TEXT_DIRECTION_LTR
+            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            editText.setSelection(editText.text.length)
+        }
 
         editTextPreference.setOnPreferenceChangeListener { _, newValue ->
             val newCommand = newValue.toString()
@@ -51,32 +72,38 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        historyHeader.setOnPreferenceClickListener {
-            showHistoryClearDialog()
-            true
+        findPreferenceNotNull<BindablePreference>("cmd_editor_buttons").onBind = { holder ->
+            holder.findViewById(R.id.btn_clear)?.setOnClickListener {
+                editTextPreference.text = ""
+                updateHistoryItems()
+            }
+
+            holder.findViewById(R.id.btn_paste)?.setOnClickListener {
+                val text = ClipboardUtils.paste(requireContext())?.trim()
+                if (!text.isNullOrBlank()) {
+                    editTextPreference.text = text
+                    cmdHistoryUtils.addCommand(text)
+                    updateHistoryItems()
+                    restartService()
+                } else {
+                    Toast.makeText(requireContext(), R.string.clipboard_empty, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            holder.findViewById(R.id.btn_help)?.setOnClickListener { openDocumentation() }
+        }
+
+        historyHeader = findPreferenceNotNull("cmd_history_header")
+        historyHeader.onBind = { holder ->
+            holder.findViewById(R.id.btn_clear_history)?.setOnClickListener { showHistoryClearDialog() }
         }
 
         updateHistoryItems()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        view.post {
-            view.findViewById<View>(R.id.btn_clear)?.setOnClickListener {
-                editTextPreference.text = ""
-                updateHistoryItems()
-            }
-
-            view.findViewById<View>(R.id.btn_paste)?.setOnClickListener {
-                val text = ClipboardUtils.paste(requireContext())
-                if (!text.isNullOrBlank()) {
-                    editTextPreference.text = text
-                    cmdHistoryUtils.addCommand(text)
-                    updateHistoryItems()
-                }
-            }
-        }
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.main_editor)
     }
 
     private fun updateHistoryItems() {
@@ -92,14 +119,12 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
         val history = cmdHistoryUtils.getHistory()
         historyHeader.isVisible = history.isNotEmpty()
 
-        if (history.isNotEmpty()) {
-            history.sortedWith(compareByDescending<Command> { it.pinned }.thenBy { history.indexOf(it) })
-                .forEachIndexed { _, command ->
-                    val preference = createPreference(command)
-                    historyPreferences.add(preference)
-                    preferenceScreen.addPreference(preference)
-                }
-        }
+        history.sortedWith(compareByDescending<Command> { it.pinned }.thenBy { history.indexOf(it) })
+            .forEach { command ->
+                val preference = createPreference(command)
+                historyPreferences.add(preference)
+                preferenceScreen.addPreference(preference)
+            }
     }
 
     private fun createPreference(command: Command) =
@@ -108,45 +133,27 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
                 super.onBindViewHolder(holder)
 
                 val nameView = holder.itemView.findViewById<TextView>(R.id.command_name)
-                val summaryView = holder.itemView.findViewById<TextView>(android.R.id.summary)
+                val appliedBadge = holder.itemView.findViewById<View>(R.id.applied_badge)
                 val pinIcon = holder.itemView.findViewById<ImageView>(R.id.pin_icon)
-                val commandName = command.name
+                val headerRow = holder.itemView.findViewById<View>(R.id.header_row)
+                val commandName = command.name?.takeIf { it.isNotBlank() }
+                val applied = command.text == editTextPreference.text
 
-                if (!commandName.isNullOrBlank()) {
-                    nameView.visibility = View.VISIBLE
-                    nameView.text = command.name
-                } else {
-                    nameView.visibility = View.GONE
-                }
-
-                val summaryText = buildSummary(command)
-                if (summaryText.isNotBlank()) {
-                    summaryView.visibility = View.VISIBLE
-                    summaryView.text = summaryText
-                } else {
-                    summaryView.visibility = View.GONE
-                }
-
+                nameView.visibility = if (commandName != null) View.VISIBLE else View.INVISIBLE
+                nameView.text = commandName
+                appliedBadge.visibility = if (applied) View.VISIBLE else View.GONE
                 pinIcon.visibility = if (command.pinned) View.VISIBLE else View.GONE
+                headerRow.visibility = if (commandName != null || applied || command.pinned) View.VISIBLE else View.GONE
             }
         }.apply {
             title = command.text
             layoutResource = R.layout.history_item
+            isIconSpaceReserved = false
             setOnPreferenceClickListener {
                 showActionDialog(command)
                 true
             }
         }
-
-    private fun buildSummary(command: Command): String {
-        val parts = mutableListOf<String>()
-
-        if (command.text == editTextPreference.text) {
-            parts.add(getString(R.string.cmd_history_applied))
-        }
-
-        return parts.joinToString(" • ")
-    }
 
     private fun showHistoryClearDialog() {
         val options = arrayOf(
@@ -154,21 +161,28 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
             getString(R.string.cmd_history_delete_all),
         )
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.cmd_history_menu))
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.cmd_history_clear)
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> deleteUnpinnedHistory()
-                    1 -> deleteAllHistory()
+                    1 -> confirmDeleteAllHistory()
                 }
             }
-            .setNegativeButton(getString(android.R.string.cancel), null)
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
-    private fun deleteAllHistory() {
-        cmdHistoryUtils.clearAllHistory()
-        updateHistoryItems()
+    private fun confirmDeleteAllHistory() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.cmd_history_delete_all)
+            .setMessage(R.string.action_cannot_undo)
+            .setPositiveButton(R.string.action_delete) { _, _ ->
+                cmdHistoryUtils.clearAllHistory()
+                updateHistoryItems()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun deleteUnpinnedHistory() {
@@ -178,16 +192,16 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
 
     private fun showActionDialog(command: Command) {
         val options = arrayOf(
-            getString(R.string.cmd_history_apply),
+            getString(R.string.action_apply),
             if (command.pinned) getString(R.string.cmd_history_unpin) else getString(R.string.cmd_history_pin),
             getString(R.string.cmd_history_rename),
-            getString(R.string.cmd_history_edit),
-            getString(R.string.cmd_history_copy),
-            getString(R.string.cmd_history_delete)
+            getString(R.string.action_edit),
+            getString(R.string.action_copy),
+            getString(R.string.action_delete)
         )
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.cmd_history_menu))
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(command.name?.takeIf { it.isNotBlank() } ?: getString(R.string.cmd_history_menu))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> applyCommand(command.text)
@@ -198,57 +212,66 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
                     5 -> deleteCommand(command.text)
                 }
             }
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
-    private fun showRenameDialog(command: Command) {
+    private fun dialogInput(text: String?, code: Boolean): Pair<LinearLayout, EditText> {
         val input = EditText(requireContext()).apply {
-            setText(command.name)
+            setText(text)
+            if (code) {
+                typeface = Typeface.MONOSPACE
+                textDirection = View.TEXT_DIRECTION_LTR
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                    InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            } else {
+                inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                setSingleLine()
+                hint = getString(R.string.cmd_history_name_hint)
+            }
+            setSelection(this.text.length)
         }
-
+        val padding = (20 * resources.displayMetrics.density).toInt()
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(50, 20, 50, 20)
+            setPadding(padding, padding / 2, padding, 0)
             addView(input)
         }
+        return container to input
+    }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.cmd_history_rename))
+    private fun showRenameDialog(command: Command) {
+        val (container, input) = dialogInput(command.name, code = false)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.cmd_history_rename)
             .setView(container)
-            .setPositiveButton(getString(android.R.string.ok)) { _, _ ->
-                val newName = input.text.toString()
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newName = input.text.toString().trim()
                 if (newName != command.name) {
                     cmdHistoryUtils.renameCommand(command.text, newName)
                     updateHistoryItems()
                 }
             }
-            .setNegativeButton(getString(android.R.string.cancel), null)
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
     private fun showEditDialog(command: Command) {
-        val input = EditText(requireContext()).apply {
-            setText(command.text)
-        }
+        val (container, input) = dialogInput(command.text, code = true)
 
-        val container = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(50, 20, 50, 20)
-            addView(input)
-        }
-
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.cmd_history_edit))
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.action_edit)
             .setView(container)
-            .setPositiveButton(getString(android.R.string.ok)) { _, _ ->
-                val newText = input.text.toString()
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newText = input.text.toString().trim()
                 if (newText.isNotBlank() && newText != command.text) {
                     cmdHistoryUtils.editCommand(command.text, newText)
                     if (editTextPreference.text == command.text) applyCommand(newText)
                     updateHistoryItems()
                 }
             }
-            .setNegativeButton(getString(android.R.string.cancel), null)
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
@@ -271,6 +294,14 @@ class ByeDpiCMDSettingsFragment : PreferenceFragmentCompat() {
     private fun deleteCommand(command: String) {
         cmdHistoryUtils.deleteCommand(command)
         updateHistoryItems()
+    }
+
+    private fun openDocumentation() {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.byedpi_docs).toUri()))
+        } catch (_: Exception) {
+            Toast.makeText(requireContext(), R.string.no_browser, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun restartService() {

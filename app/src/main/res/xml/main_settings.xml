@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:tag="main_settings">
 
     <androidx.preference.PreferenceCategory
-        android:title="@string/general_category">
-
-        <ListPreference
-            android:key="language"
-            android:icon="@drawable/ic_language"
-            android:title="@string/lang_settings"
-            android:entries="@array/languages"
-            android:entryValues="@array/languages_entries"
-            android:summary="%s"
-            android:defaultValue="system" />
-
-        <ListPreference
-            android:key="app_theme"
-            android:icon="@drawable/ic_palette"
-            android:title="@string/theme_settings"
-            android:entries="@array/themes"
-            android:entryValues="@array/themes_entries"
-            android:summary="%s"
-            android:defaultValue="system" />
+        android:key="connection_category"
+        android:title="@string/connection_category">
 
         <ListPreference
             android:key="byedpi_mode"
@@ -31,31 +13,7 @@
             android:title="@string/mode_setting"
             android:entries="@array/byedpi_modes"
             android:entryValues="@array/byedpi_modes_entries"
-            android:summary="%s"
             android:defaultValue="vpn" />
-
-        <Preference
-            android:key="dns_ip_picker"
-            android:icon="@drawable/ic_dns"
-            android:title="@string/dbs_ip_setting" />
-
-        <Preference
-            android:key="private_dns"
-            android:icon="@drawable/ic_dns"
-            android:title="@string/private_dns"
-            android:persistent="false"
-            app:isPreferenceVisible="false" />
-
-        <EditTextPreference
-            android:key="dns_ip"
-            android:title="@string/dbs_ip_setting"
-            android:defaultValue="1.1.1.1" />
-
-        <SwitchPreference
-            android:key="ipv6_enable"
-            android:icon="@drawable/ic_network"
-            android:title="@string/ipv6_setting"
-            android:defaultValue="false" />
 
         <ListPreference
             android:key="applist_type"
@@ -72,6 +30,65 @@
             android:title="@string/apps_select"
             app:fragment="io.github.romanvht.byedpi.fragments.AppSelectionFragment" />
 
+        <Preference
+            android:key="dns_ip_picker"
+            android:icon="@drawable/ic_dns"
+            android:title="@string/dbs_ip_setting" />
+
+        <Preference
+            android:key="private_dns"
+            android:icon="@drawable/ic_dns"
+            android:title="@string/private_dns"
+            android:persistent="false"
+            app:isPreferenceVisible="false" />
+
+        <EditTextPreference
+            android:key="dns_ip"
+            android:title="@string/dbs_ip_setting"
+            android:defaultValue="1.1.1.1"
+            app:isPreferenceVisible="false" />
+
+        <SwitchPreference
+            android:key="ipv6_enable"
+            android:icon="@drawable/ic_network"
+            android:title="@string/ipv6_setting"
+            android:summary="@string/ipv6_summary"
+            android:defaultValue="false" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="strategy_category"
+        android:title="@string/strategy_category">
+
+        <Preference
+            android:key="proxy_test"
+            android:icon="@drawable/ic_speed"
+            android:title="@string/title_test"
+            android:summary="@string/summary_test" />
+
+        <SwitchPreference
+            android:key="byedpi_enable_cmd_settings"
+            android:icon="@drawable/ic_terminal"
+            android:title="@string/use_command_line_settings"
+            android:summaryOn="@string/use_command_line_settings_on"
+            android:summaryOff="@string/use_command_line_settings_off"
+            android:defaultValue="true" />
+
+        <Preference
+            android:key="byedpi_cmd_settings"
+            android:icon="@drawable/ic_code"
+            android:title="@string/main_editor"
+            android:summary="@string/main_editor_summary"
+            app:fragment="io.github.romanvht.byedpi.fragments.ByeDpiCMDSettingsFragment" />
+
+        <Preference
+            android:key="byedpi_ui_settings"
+            android:icon="@drawable/ic_tune"
+            android:title="@string/ui_editor"
+            android:summary="@string/ui_editor_summary"
+            app:fragment="io.github.romanvht.byedpi.fragments.ByeDpiUISettingsFragment" />
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
@@ -81,6 +98,7 @@
             android:key="autostart"
             android:icon="@drawable/ic_power"
             android:title="@string/autostart_settings"
+            android:summary="@string/autostart_summary"
             android:defaultValue="false" />
 
         <SwitchPreference
@@ -92,38 +110,35 @@
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:title="@string/byedpi_category">
+        android:title="@string/appearance_category">
+
+        <ListPreference
+            android:key="language"
+            android:icon="@drawable/ic_language"
+            android:title="@string/lang_settings"
+            android:defaultValue="system" />
+
+        <ListPreference
+            android:key="app_theme"
+            android:icon="@drawable/ic_brightness"
+            android:title="@string/theme_settings"
+            android:entries="@array/themes"
+            android:entryValues="@array/themes_entries"
+            android:summary="%s"
+            android:defaultValue="system" />
 
         <SwitchPreference
-            android:key="byedpi_enable_cmd_settings"
-            android:icon="@drawable/ic_terminal"
-            android:title="@string/use_command_line_settings"
-            android:defaultValue="true" />
-
-        <Preference
-            android:key="byedpi_ui_settings"
-            android:icon="@drawable/ic_tune"
-            android:title="@string/ui_editor"
-            app:useSimpleSummaryProvider="true"
-            app:fragment="io.github.romanvht.byedpi.fragments.ByeDpiUISettingsFragment" />
-
-        <Preference
-            android:key="byedpi_cmd_settings"
-            android:icon="@drawable/ic_code"
-            android:title="@string/command_line_editor"
-            app:useSimpleSummaryProvider="true"
-            app:fragment="io.github.romanvht.byedpi.fragments.ByeDpiCMDSettingsFragment" />
-
-        <Preference
-            android:key="proxy_test"
-            android:icon="@drawable/ic_speed"
-            android:title="@string/title_test"
-            android:summary="@string/summary_test"/>
+            android:key="dynamic_colors"
+            android:icon="@drawable/ic_palette"
+            android:title="@string/dynamic_colors"
+            android:summary="@string/dynamic_colors_summary"
+            android:defaultValue="false"
+            app:isPreferenceVisible="false" />
 
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:title="@string/byedpi_proxy"
+        android:title="@string/listen_address_category"
         android:key="byedpi_proxy_category">
 
         <EditTextPreference
@@ -150,15 +165,36 @@
             android:key="battery_optimization"
             android:icon="@drawable/ic_battery"
             android:title="@string/battery_optimization"
-            android:summary="@string/battery_optimization_summary">
-        </Preference>
+            android:summary="@string/battery_optimization_summary" />
 
         <Preference
             android:key="storage_access"
             android:icon="@drawable/ic_folder"
             android:title="@string/storage_access"
-            android:summary="@string/storage_access_summary">
-        </Preference>
+            android:summary="@string/storage_access_summary" />
+
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:title="@string/backup_category">
+
+        <Preference
+            android:key="export_settings"
+            android:icon="@drawable/ic_backup"
+            android:title="@string/export_settings"
+            android:summary="@string/export_settings_summary" />
+
+        <Preference
+            android:key="import_settings"
+            android:icon="@drawable/ic_folder"
+            android:title="@string/import_settings"
+            android:summary="@string/import_settings_summary" />
+
+        <Preference
+            android:key="reset_settings"
+            android:icon="@drawable/ic_restore"
+            android:title="@string/reset_settings"
+            android:summary="@string/reset_settings_summary" />
 
     </androidx.preference.PreferenceCategory>
 
@@ -166,50 +202,32 @@
         android:title="@string/about_category">
 
         <Preference
-            android:key="donate"
-            android:icon="@drawable/ic_favorite"
-            android:title="@string/donate" />
-
-        <Preference
-            android:key="telegram_group"
-            android:title="@string/telegram_link"
-            android:icon="@drawable/ic_telegram">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://t.me/byebyedpi_group" />
-        </Preference>
-
-        <Preference
-            android:key="source_code"
-            android:title="@string/source_code_link"
-            android:icon="@drawable/ic_github">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://github.com/romanvht/ByeDPIAndroid" />
-        </Preference>
-
-        <Preference
-            android:key="documentation"
-            android:icon="@drawable/ic_documentation"
-            android:title="@string/documentation_link">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://byebyedpi.xyz" />
-        </Preference>
-
-        <Preference
             android:key="version"
             android:icon="@drawable/ic_info"
-            android:title="@string/version"
-            app:useSimpleSummaryProvider="true"
-            tools:summary="1.0.0" />
+            android:title="@string/app_name" />
 
         <Preference
             android:key="byedpi_version"
             android:icon="@drawable/ic_info"
-            android:title="@string/byedpi_version"
-            app:useSimpleSummaryProvider="true"
-            android:summary="0.0.1" />
+            android:title="@string/byedpi_version" />
+
+        <Preference
+            android:key="source_code"
+            android:title="@string/source_code_link"
+            android:summary="@string/source_code_summary"
+            android:icon="@drawable/ic_github" />
+
+        <Preference
+            android:key="documentation"
+            android:icon="@drawable/ic_documentation"
+            android:title="@string/cmd_documentation"
+            android:summary="@string/documentation_summary" />
+
+        <Preference
+            android:key="credits"
+            android:icon="@drawable/ic_favorite"
+            android:title="@string/credits"
+            android:summary="@string/credits_summary" />
 
     </androidx.preference.PreferenceCategory>
 

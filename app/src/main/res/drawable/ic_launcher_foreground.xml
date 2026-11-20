@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Brand glyph: a route that steps aside to get around a block. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="55"
+        android:scaleX="0.82"
+        android:scaleY="0.82"
+        android:translateY="-1">
+        <path
+            android:fillAlpha="0.45"
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M36.5,33L47.5,33A5.5,5.5 0,0 1,47.5 44L36.5,44A5.5,5.5 0,0 1,36.5 33Z" />
+        <path
+            android:pathData="M42,79L42,71C42,60.5 66,63 66,52.5L66,40"
+            android:strokeWidth="8"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M56,41L66,28L76,41Z"
+            android:strokeWidth="3.5"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M36,80A6,6 0,1 0,48 80A6,6 0,1 0,36 80Z" />
+    </group>
+</vector>

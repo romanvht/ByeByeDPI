@@ -12,6 +12,7 @@
         android:id="@+id/appIcon"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:importantForAccessibility="no"
         android:layout_marginEnd="8dp" />
 
     <LinearLayout

@@ -1,13 +1,12 @@
 name: Bug Report / Сообщение об ошибке
 description: File a bug report / Сообщить об ошибке в программе
 labels: [ bug ]
-assignees: romanvht
 body:
   - type: markdown
     attributes:
       value: |
-        ### If you have trouble with specific websites or or can't configure the app, please use the [discussions section](https://github.com/dovecoteescapee/ByeDPIAndroid/discussions) to discuss it. This template is only for reporting bugs in the ByeDPI program.
-        ### Если у вас не работают какие-то сайты или не получается настроить приложение, используйте [раздел дискуссий](https://github.com/dovecoteescapee/ByeDPIAndroid/discussions) для обсуждения этого. Этот шаблон предназначен только для сообщений об ошибках в программе ByeDPI.
+        ### If some websites don't open or you can't set up the app, please ask on the [NTC.party forum](https://ntc.party/c/community-software/byedpi/39). This template is only for reporting bugs in the app.
+        ### Если у вас не открываются какие-то сайты или не получается настроить приложение, спросите на [форуме NTC.party](https://ntc.party/c/community-software/byedpi/39). Этот шаблон предназначен только для сообщений об ошибках в приложении.
   - type: textarea
     id: bug
     attributes:
@@ -47,15 +46,15 @@ body:
       value: |
         **Smartphone / Смартфон:**
         - Device: [e.g. Pixel Fold, Samsung Galaxy S24]
-        - Android version: [e.g. 10]
-        - ByeDPI version: [e.g. 1.0.2]
+        - Android version: [e.g. 14]
+        - App version: [e.g. 2.0.0]
     validations:
       required: true
   - type: textarea
     id: context
     attributes:
       label: Additional context / Дополнительная информация
-      description: Add any other context about the problem here / Добавьте любую другую информацию о проблеме здесь
+      description: Add any other context about the problem here. Logs help a lot (main screen menu → Save logs) / Добавьте любую другую информацию о проблеме. Очень помогут логи (меню главного экрана → Сохранить логи)
   - type: checkboxes
     id: checklist
     attributes:

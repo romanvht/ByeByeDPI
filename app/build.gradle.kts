@@ -13,12 +13,16 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.romanvht.byedpi"
+        // The app id is the app's identity on a device and in stores. The Kotlin
+        // namespace above stays as in the upstream project to keep merging easy.
+        applicationId = "io.github.metetv2021cloud.sidestep"
         minSdk = 21
+        // Android 15 (API 35) limits "dataSync" foreground services to 6 hours a day,
+        // which would stop the proxy mode, so the target stays at API 34 for now.
         //noinspection OldTargetApi
         targetSdk = 34
-        versionCode = 1820
-        versionName = "1.8.2"
+        versionCode = 2000
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -42,6 +46,11 @@ android {
         debug {
             buildConfigField("String", "VERSION_NAME",  "\"${defaultConfig.versionName}-debug\"")
         }
+    }
+
+    testOptions {
+        // Android classes used by local unit tests (such as Log) return defaults instead of throwing.
+        unitTests.isReturnDefaultValues = true
     }
 
     compileOptions {

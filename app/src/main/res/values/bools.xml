@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark system bar icons on light backgrounds. -->
+    <bool name="light_system_bars">true</bool>
+</resources>

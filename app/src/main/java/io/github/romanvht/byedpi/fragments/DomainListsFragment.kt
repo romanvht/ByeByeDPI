@@ -1,6 +1,7 @@
 package io.github.romanvht.byedpi.fragments
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,12 +11,12 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.adapters.DomainListAdapter
 import io.github.romanvht.byedpi.data.DomainList
@@ -46,9 +47,7 @@ class DomainListsFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.action_reset_lists -> {
-                        DomainListUtils.resetLists(requireContext())
-                        Toast.makeText(requireContext(), R.string.domain_list_reset_done, Toast.LENGTH_SHORT).show()
-                        refreshLists()
+                        confirmReset()
                         true
                     }
                     else -> false
@@ -60,7 +59,7 @@ class DomainListsFragment : Fragment() {
         recyclerView = view.findViewById(R.id.domain_lists_recycler)
 
         view.findViewById<View>(R.id.add_new_list_button).setOnClickListener {
-            showAddDialog()
+            showListDialog(null)
         }
 
         adapter = DomainListAdapter(
@@ -69,7 +68,7 @@ class DomainListsFragment : Fragment() {
                 refreshLists()
             },
             onEdit = { domainList ->
-                showEditDialog(domainList)
+                showListDialog(domainList)
             },
             onDelete = { domainList ->
                 DomainListUtils.deleteList(requireContext(), domainList.id)
@@ -86,97 +85,68 @@ class DomainListsFragment : Fragment() {
         refreshLists()
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.domain_lists)
+    }
+
     private fun refreshLists() {
         val lists = DomainListUtils.getLists(requireContext())
         adapter.submitList(lists.sortedBy { it.name.lowercase() })
     }
 
-    private fun copyDomainsToClipboard(domainList: DomainList) {
-        val domainsText = domainList.domains.joinToString("\n")
-        ClipboardUtils.copy(requireContext(), domainsText, domainList.name, showToast = false)
-        Toast.makeText(requireContext(), R.string.toast_copied, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showAddDialog() {
-        val context = requireContext()
-        val layout = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(50, 40, 50, 10)
-        }
-
-        val nameInput = EditText(context).apply {
-            hint = getString(R.string.domain_list_name_hint)
-        }
-
-        val domainsInput = EditText(context).apply {
-            hint = getString(R.string.domain_list_domains_hint)
-            minLines = 5
-            gravity = android.view.Gravity.BOTTOM
-        }
-
-        layout.addView(nameInput)
-        layout.addView(domainsInput)
-
-        AlertDialog.Builder(context, R.style.CustomAlertDialog)
-            .setTitle(R.string.domain_list_add_new)
-            .setView(layout)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                val name = nameInput.text.toString().trim()
-                val domainsText = domainsInput.text.toString()
-                val domains = domainsText.lines()
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-
-                if (name.isEmpty()) {
-                    Toast.makeText(context, R.string.domain_list_name_empty, Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
-                }
-
-                if (domains.isEmpty()) {
-                    Toast.makeText(context, R.string.domain_list_domains_empty, Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
-                }
-
-                if (DomainListUtils.addList(context, name, domains)) {
-                    Toast.makeText(context, R.string.domain_list_added, Toast.LENGTH_SHORT).show()
-                    refreshLists()
-                } else {
-                    Toast.makeText(context, R.string.domain_list_already_exists, Toast.LENGTH_SHORT).show()
-                }
+    private fun confirmReset() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.domain_list_reset)
+            .setMessage(R.string.domain_list_reset_confirm)
+            .setPositiveButton(R.string.action_reset) { _, _ ->
+                DomainListUtils.resetLists(requireContext())
+                Toast.makeText(requireContext(), R.string.domain_list_reset_done, Toast.LENGTH_SHORT).show()
+                refreshLists()
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 
-    private fun showEditDialog(domainList: DomainList) {
+    private fun copyDomainsToClipboard(domainList: DomainList) {
+        val domainsText = domainList.domains.joinToString("\n")
+        ClipboardUtils.copy(requireContext(), domainsText, domainList.name)
+    }
+
+    /** Dialog to create a new list ([existing] == null) or to edit an existing one. */
+    private fun showListDialog(existing: DomainList?) {
         val context = requireContext()
+        val padding = (20 * resources.displayMetrics.density).toInt()
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(50, 40, 50, 10)
+            setPadding(padding, padding / 2, padding, 0)
         }
 
         val nameInput = EditText(context).apply {
             hint = getString(R.string.domain_list_name_hint)
-            setText(domainList.name)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            setSingleLine()
+            setText(existing?.name)
         }
 
         val domainsInput = EditText(context).apply {
             hint = getString(R.string.domain_list_domains_hint)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_VARIATION_URI
             minLines = 5
-            gravity = android.view.Gravity.BOTTOM
-            setText(domainList.domains.joinToString("\n"))
+            gravity = android.view.Gravity.TOP or android.view.Gravity.START
+            textDirection = View.TEXT_DIRECTION_LTR
+            setText(existing?.domains?.joinToString("\n"))
         }
 
         layout.addView(nameInput)
         layout.addView(domainsInput)
 
-        AlertDialog.Builder(context, R.style.CustomAlertDialog)
-            .setTitle(R.string.domain_list_edit)
+        MaterialAlertDialogBuilder(context)
+            .setTitle(if (existing == null) R.string.domain_list_add_new else R.string.domain_list_edit)
             .setView(layout)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
+            .setPositiveButton(R.string.save) { _, _ ->
                 val name = nameInput.text.toString().trim()
-                val domainsText = domainsInput.text.toString()
-                val domains = domainsText.lines()
+                val domains = domainsInput.text.toString().lines()
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
 
@@ -190,11 +160,20 @@ class DomainListsFragment : Fragment() {
                     return@setPositiveButton
                 }
 
-                if (DomainListUtils.updateList(context, domainList.id, name, domains)) {
-                    Toast.makeText(context, R.string.domain_list_updated, Toast.LENGTH_SHORT).show()
-                    refreshLists()
+                if (existing == null) {
+                    if (DomainListUtils.addList(context, name, domains)) {
+                        Toast.makeText(context, R.string.domain_list_added, Toast.LENGTH_SHORT).show()
+                        refreshLists()
+                    } else {
+                        Toast.makeText(context, R.string.domain_list_already_exists, Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(context, R.string.domain_list_update_failed, Toast.LENGTH_SHORT).show()
+                    if (DomainListUtils.updateList(context, existing.id, name, domains)) {
+                        Toast.makeText(context, R.string.domain_list_updated, Toast.LENGTH_SHORT).show()
+                        refreshLists()
+                    } else {
+                        Toast.makeText(context, R.string.domain_list_update_failed, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)

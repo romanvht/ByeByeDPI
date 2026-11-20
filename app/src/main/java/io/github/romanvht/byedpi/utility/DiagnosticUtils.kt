@@ -93,7 +93,7 @@ object DiagnosticUtils {
             appendLine(value(
                 context,
                 R.string.test_delay,
-                "${preferences.getIntStringNotNull("byedpi_proxytest_delay", 1)}${context.getString(R.string.diagnostic_seconds)}"
+                preferences.getIntStringNotNull("byedpi_proxytest_delay", 1).toString()
             ))
             appendLine(value(
                 context,
@@ -108,7 +108,7 @@ object DiagnosticUtils {
             appendLine(value(
                 context,
                 R.string.test_timeout,
-                "${preferences.getLongStringNotNull("byedpi_proxytest_timeout", 5)}${context.getString(R.string.diagnostic_seconds)}"
+                preferences.getLongStringNotNull("byedpi_proxytest_timeout", 5).toString()
             ))
             appendLine(value(
                 context,

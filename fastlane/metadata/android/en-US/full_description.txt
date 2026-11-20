@@ -1,12 +1,17 @@
-<p><i>ByeByeDPI</i> launches a local SOCKS5 proxy <a href='https://github.com/hufrea/byedpi' target='_blank' rel='nofollow noopener'>ByeDPI</a> to bypass DPI and redirects all traffic through it.</p>
-<p>For stable operation, configuration adjustments may be required. You can read more about various settings in the <a href='https://github.com/hufrea/byedpi/blob/main/README.md' target='_blank' rel='nofollow noopener'>ByeDPI documentation</a>.</p>
-<p>The application uses VPN mode on Android to redirect traffic but does not transmit anything to a remote server. It does not encrypt traffic or hide your IP address.</p>
+<p><i>Sidestep</i> opens websites and apps that your internet provider blocks with deep packet inspection (DPI). It runs <a href='https://github.com/hufrea/byedpi' target='_blank' rel='nofollow noopener'>ByeDPI</a> on your device and sends your traffic through it.</p>
+<p>Sidestep is not a VPN service. It uses Android's VPN feature to redirect traffic on the device, but nothing is sent to a remote server. It does not encrypt your traffic or hide your IP address.</p>
 <p>
 <b>Features</b><br>
-* Support for app filtering in VPN mode (split tunneling via whitelist/blacklist)<br>
-* Auto-launch of VPN/Proxy on device startup<br>
-* Saving command-line parameter lists with switching capability<br>
-* Improved compatibility with Android TV/BOX<br>
-* Import/export of settings<br>
-* Ability to test application performance using a set of pre-configured commands (Beta)<br>
+* One button to connect, with a clear status and hints<br>
+* Strategy finder: tests ready-made strategies on your network, scores them and applies the best one in one tap<br>
+* Saved strategies that you can switch from the main screen, pin and rename<br>
+* Blocked apps: finds out your country, lists the apps blocked there and installs them in one tap, checking that each file carries the developer's own signature<br>
+* Visual editor, or ByeDPI command-line arguments for experts<br>
+* VPN mode for all apps, all apps except the ones you choose, or only the ones you choose<br>
+* Local SOCKS5 proxy mode for single apps<br>
+* Starts when the device turns on; Quick Settings tile and shortcuts<br>
+* Works on Android TV and TV boxes<br>
+* 18 languages, light and dark themes, colors from your wallpaper on Android 12+<br>
+* Import and export of settings (backups from ByeByeDPI work too)<br>
 </p>
+<p>Sidestep is a redesigned fork of <a href='https://github.com/romanvht/ByeByeDPI' target='_blank' rel='nofollow noopener'>ByeByeDPI</a> by romanvht.</p>

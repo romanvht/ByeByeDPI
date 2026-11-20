@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main screen connect button -->
+    <dimen name="connect_frame_size">208dp</dimen>
+    <dimen name="connect_halo_size">184dp</dimen>
+    <dimen name="connect_progress_size">172dp</dimen>
+    <dimen name="connect_button_size">152dp</dimen>
+    <dimen name="connect_button_radius">76dp</dimen>
+    <dimen name="connect_icon_size">60dp</dimen>
+
+    <!-- Content is centered and capped at this width on tablets and TVs -->
+    <dimen name="content_max_width">640dp</dimen>
+</resources>

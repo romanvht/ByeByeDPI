@@ -7,9 +7,12 @@ import android.content.Intent
 import android.net.VpnService
 import android.os.Build
 import android.util.Log
+import androidx.core.content.edit
 import io.github.romanvht.byedpi.R
 import io.github.romanvht.byedpi.data.*
 import io.github.romanvht.byedpi.utility.createPauseNotification
+import io.github.romanvht.byedpi.utility.getPreferences
+import io.github.romanvht.byedpi.utility.mode
 import io.github.romanvht.byedpi.utility.registerNotificationChannel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.selects.select
@@ -20,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong
 object ServiceManager {
     private const val TAG = "ServiceManager"
     private const val PAUSE_NOTIFICATION_ID = 3
+    private const val APPLIED_CONFIGURATION = "applied_configuration"
     private val scope = CoroutineScope(
         Dispatchers.Main.immediate + SupervisorJob() + CoroutineExceptionHandler {
             _, error -> Log.e(TAG, "Service command failed", error)
@@ -30,7 +34,7 @@ object ServiceManager {
     private var application: Application? = null
     private var session: Session? = null
 
-    private class Session(val mode: Mode, val engine: NativeEngine) {
+    private class Session(val mode: Mode, val engine: NativeEngine, val restored: Boolean = false) {
         val configuration = CompletableDeferred<Configuration>()
         val configured = CompletableDeferred<Boolean>()
         val started = CompletableDeferred<Boolean>()
@@ -38,6 +42,32 @@ object ServiceManager {
         var stopping = false
         var job: Job? = null
     }
+
+    /** True while a session started from this app is still coming up. */
+    val isStarting: Boolean
+        get() = session?.let { !it.restored && !it.stopping && !it.started.isCompleted } ?: false
+
+    /** True while the running session is shutting down. */
+    val isStopping: Boolean
+        get() = session?.stopping == true
+
+    /**
+     * True when the settings were changed after the running session was configured,
+     * so a reconnect is needed for them to take effect.
+     */
+    fun isConfigurationOutdated(context: Context): Boolean {
+        val current = session ?: return false
+        if (current.stopping) return false
+        val preferences = context.getPreferences()
+        val applied = preferences.getString(APPLIED_CONFIGURATION, null) ?: return false
+        val wanted = runCatching {
+            fingerprint(preferences.mode(), NativeEngine.configuration(context))
+        }.getOrNull() ?: return false
+        return applied != wanted
+    }
+
+    private fun fingerprint(mode: Mode, configuration: Configuration): String =
+        "${mode.name}:${configuration.hashCode()}"
 
     fun start(context: Context, mode: Mode) {
         val app = context.applicationContext as Application
@@ -186,7 +216,9 @@ object ServiceManager {
     private fun configure(current: Session, app: Application) {
         if (current.configuration.isCompleted || current.started.isCompleted) return
         try {
-            current.configuration.complete(NativeEngine.configuration(app))
+            val configuration = NativeEngine.configuration(app)
+            app.getPreferences().edit { putString(APPLIED_CONFIGURATION, fingerprint(current.mode, configuration)) }
+            current.configuration.complete(configuration)
         } catch (e: Exception) {
             current.configuration.completeExceptionally(e)
         }
@@ -205,7 +237,7 @@ object ServiceManager {
             if (appStatus.first != AppStatus.Halted) publish(appStatus.second, AppStatus.Halted, STOPPED_BROADCAST)
             return
         }
-        val current = Session(running.first, NativeEngine(app, running.first, running.second))
+        val current = Session(running.first, NativeEngine(app, running.first, running.second), restored = true)
         session = current
         publish(current.mode, AppStatus.Running, STARTED_BROADCAST)
         monitor(current, launchService = false)

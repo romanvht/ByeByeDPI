@@ -1,6 +1,5 @@
 package io.github.romanvht.byedpi.activities
 
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
@@ -12,20 +11,26 @@ import io.github.romanvht.byedpi.utility.getStringNotNull
 
 abstract class BaseActivity : AppCompatActivity() {
 
+    private var dynamicColorsApplied = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val prefs = getPreferences()
 
-        val lang = prefs.getStringNotNull("language", "system")
-        SettingsUtils.setLang(lang)
+        SettingsUtils.restoreLanguage(this)
+        SettingsUtils.setTheme(prefs.getStringNotNull("app_theme", "system"))
 
-        val theme = prefs.getStringNotNull("app_theme", "system")
-        SettingsUtils.setTheme(theme)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        dynamicColorsApplied = SettingsUtils.useDynamicColors(this)
+        if (dynamicColorsApplied) {
             DynamicColors.applyToActivityIfAvailable(this)
         }
 
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Pick up a changed "Use system colors" setting when coming back to an older screen
+        if (dynamicColorsApplied != SettingsUtils.useDynamicColors(this)) recreate()
     }
 
     protected fun setupToolbar() {

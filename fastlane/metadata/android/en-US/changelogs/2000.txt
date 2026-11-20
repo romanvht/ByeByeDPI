@@ -1,0 +1,10 @@
+New name and new look: Sidestep
+* Simpler main screen with one connect button
+* Welcome screen and clear hints
+* The strategy finder scores each strategy and applies it in one tap
+* Switch saved strategies from the main screen
+* Blocked apps: see and install the apps blocked in your country
+* Settings can be changed while connected
+* 18 languages, English by default
+* Colors from your wallpaper and a new icon
+* Many fixes

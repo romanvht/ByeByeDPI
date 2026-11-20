@@ -1,0 +1,389 @@
+{
+  "_comment": "Apps that are blocked in some countries. Statuses: blocked, or restricted (slowed down or partly blocked). Download links must be on a host listed in AppCatalogUtils.trustedHosts. 'apkpure' downloads come from the APKPure mirror and need 'signatures': the SHA-256 certificate fingerprints the developer publishes in https://<their site>/.well-known/assetlinks.json; files signed with other keys are never installed. Change 'updated' when editing, so that the app picks up the new list with 'Update the list'.",
+  "version": 1,
+  "updated": "2026-10-30",
+  "noPlay": [
+    "CN"
+  ],
+  "apps": [
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "category": "video",
+      "packages": [
+        "com.google.android.youtube"
+      ],
+      "play": "com.google.android.youtube",
+      "website": "https://www.youtube.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "3D:7A:12:23:01:9A:A3:9D:9E:A0:E3:43:6A:B7:C0:89:6B:FB:4F:B6:79:F4:DE:5F:E7:C2:3F:32:6C:8F:99:4A",
+        "7F:D2:CE:A3:0C:3A:60:22:EB:29:41:9C:E8:F6:F9:2C:E8:A4:BD:35:B0:CC:87:9E:D3:CC:A6:CB:F5:E9:99:2D",
+        "5A:AD:2B:EE:6D:B9:5D:17:E0:5A:08:D7:D1:E6:4C:10:A1:51:18:79:15:44:83:91:6B:6A:E6:C7:FD:9C:B0:C6"
+      ],
+      "regions": {
+        "RU": "blocked",
+        "IR": "blocked",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "category": "messenger",
+      "packages": [
+        "org.telegram.messenger.web",
+        "org.telegram.messenger"
+      ],
+      "play": "org.telegram.messenger",
+      "website": "https://telegram.org/android",
+      "download": {
+        "type": "apk",
+        "url": "https://telegram.org/dl/android/apk"
+      },
+      "regions": {
+        "RU": "restricted",
+        "IR": "blocked",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "category": "messenger",
+      "packages": [
+        "com.whatsapp"
+      ],
+      "play": "com.whatsapp",
+      "website": "https://www.whatsapp.com/android/",
+      "download": {
+        "type": "page",
+        "url": "https://www.whatsapp.com/android/",
+        "pattern": "https://scontent\\.whatsapp\\.net/[^\"'\\s<>]+?/WhatsApp\\.apk[^\"'\\s<>]*"
+      },
+      "regions": {
+        "RU": "blocked",
+        "IR": "restricted",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "category": "messenger",
+      "packages": [
+        "org.thoughtcrime.securesms"
+      ],
+      "play": "org.thoughtcrime.securesms",
+      "website": "https://signal.org/android/apk/",
+      "download": {
+        "type": "json",
+        "url": "https://updates.signal.org/android/latest.json"
+      },
+      "regions": {
+        "RU": "blocked",
+        "IR": "blocked",
+        "CN": "blocked",
+        "VE": "blocked"
+      }
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "category": "social",
+      "packages": [
+        "com.instagram.android"
+      ],
+      "play": "com.instagram.android",
+      "website": "https://www.instagram.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "5F:3E:50:F4:35:58:3C:9A:E6:26:30:2A:71:F7:34:00:44:08:7A:7E:2C:60:AD:AC:FC:25:42:05:A9:93:E3:05",
+        "3A:10:C5:0C:18:BA:93:75:06:C2:87:5E:90:47:BE:74:F8:FD:8B:86:FA:E2:FF:9F:EA:A5:0A:81:FC:B4:C0:14"
+      ],
+      "regions": {
+        "RU": "blocked",
+        "IR": "blocked",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "category": "social",
+      "packages": [
+        "com.facebook.katana"
+      ],
+      "play": "com.facebook.katana",
+      "website": "https://www.facebook.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "12:9D:C5:34:80:E2:BF:1B:55:CF:6E:EC:20:5F:E0:F5:9D:2B:9F:81:E7:EE:4F:B6:7C:EC:BB:EE:25:A0:B0:80",
+        "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1",
+        "91:1D:60:44:46:08:4C:A7:F4:76:0B:77:5B:FC:16:0F:A8:70:24:41:24:0A:72:58:64:5D:7A:72:C4:31:2D:27"
+      ],
+      "regions": {
+        "RU": "blocked",
+        "IR": "blocked",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "x",
+      "name": "X",
+      "category": "social",
+      "packages": [
+        "com.twitter.android"
+      ],
+      "play": "com.twitter.android",
+      "website": "https://x.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "0F:D9:A0:CF:B0:7B:65:95:09:97:B4:EA:EB:DC:53:93:13:92:39:1A:A4:06:53:8A:3B:04:07:3B:C2:CE:2F:E9",
+        "F9:07:E3:BB:21:D6:31:9C:CA:34:07:80:CC:63:B5:15:3A:92:97:1F:85:D3:8A:48:82:E6:A5:7A:41:AC:33:84",
+        "99:22:6E:ED:9B:9E:EE:14:6C:B1:61:49:2B:CF:91:A5:4D:97:FF:04:54:32:8D:93:B8:64:F3:1F:6C:8D:D7:0A"
+      ],
+      "regions": {
+        "RU": "blocked",
+        "IR": "blocked",
+        "CN": "blocked",
+        "VE": "restricted"
+      }
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "category": "messenger",
+      "packages": [
+        "com.discord"
+      ],
+      "play": "com.discord",
+      "website": "https://discord.com/download",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "3C:39:D2:3C:F9:36:78:49:A5:C6:99:39:56:47:FE:0E:5B:FE:A5:A1:F1:F4:0D:8C:71:7D:DC:70:F8:BF:A1:13",
+        "99:03:CA:AD:D3:9C:B4:0B:6A:3E:CB:33:C4:2C:B8:85:65:1D:C4:A8:EA:AE:27:CC:66:56:9D:E8:6B:DD:FC:62"
+      ],
+      "regions": {
+        "RU": "blocked",
+        "TR": "blocked",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "viber",
+      "name": "Viber",
+      "category": "messenger",
+      "packages": [
+        "com.viber.voip"
+      ],
+      "play": "com.viber.voip",
+      "website": "https://www.viber.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "6E:98:57:86:5C:0D:45:68:E0:2E:F7:6D:C8:38:ED:28:2A:3D:24:B1:2C:70:27:B3:92:61:90:D9:9B:42:FE:09"
+      ],
+      "regions": {
+        "RU": "blocked"
+      }
+    },
+    {
+      "id": "snapchat",
+      "name": "Snapchat",
+      "category": "social",
+      "packages": [
+        "com.snapchat.android"
+      ],
+      "play": "com.snapchat.android",
+      "website": "https://www.snapchat.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "C7:E9:CA:F6:6D:BE:34:3D:AE:A2:B3:D9:E7:56:F7:B1:D9:13:DE:31:07:97:CF:36:17:CE:32:97:46:17:CF:48",
+        "2F:1C:AA:FC:A1:ED:30:D0:B4:E3:88:63:EE:FA:BE:A0:E8:15:71:1F:A4:CF:79:B8:22:51:9A:82:59:D9:5A:58"
+      ],
+      "regions": {
+        "RU": "blocked"
+      }
+    },
+    {
+      "id": "roblox",
+      "name": "Roblox",
+      "category": "game",
+      "packages": [
+        "com.roblox.client"
+      ],
+      "play": "com.roblox.client",
+      "website": "https://www.roblox.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "44:93:2E:A3:5A:17:A2:67:37:2D:71:B5:4D:1A:0C:B3:DA:0D:CA:51:13:E9:44:06:AE:2F:E1:80:90:BA:14:77",
+        "2B:EB:D1:89:E8:D3:10:64:01:34:70:56:C9:3D:04:5B:61:E2:0E:22:D0:C3:CB:ED:85:47:4A:EB:00:A3:D1:2A",
+        "14:E8:82:B1:F7:37:54:66:03:05:B1:E5:50:30:F7:6F:E6:B2:35:3F:46:C4:E5:93:D5:69:93:3E:95:BC:F7:C3",
+        "29:4F:2C:82:1D:5B:CA:5B:CB:0A:A5:60:04:8E:2E:CF:78:A4:2D:F2:85:8D:06:A3:65:EA:5B:74:45:B0:09:40",
+        "7B:04:82:FB:61:2B:D9:C8:70:84:D6:FA:48:F1:C7:BA:A7:F1:A2:2F:47:12:20:CB:A7:F6:42:8D:FB:75:46:2E"
+      ],
+      "regions": {
+        "RU": "blocked",
+        "TR": "blocked"
+      }
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "category": "social",
+      "packages": [
+        "com.linkedin.android"
+      ],
+      "play": "com.linkedin.android",
+      "website": "https://www.linkedin.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "3B:6A:40:3C:A9:1D:56:AB:85:45:17:72:02:03:17:66:40:81:6D:3F:92:3F:92:CC:A1:61:38:F5:CC:3D:07:27"
+      ],
+      "regions": {
+        "RU": "blocked"
+      }
+    },
+    {
+      "id": "wattpad",
+      "name": "Wattpad",
+      "category": "reading",
+      "packages": [
+        "wp.wattpad"
+      ],
+      "play": "wp.wattpad",
+      "website": "https://www.wattpad.com",
+      "download": {
+        "type": "apkpure"
+      },
+      "signatures": [
+        "01:2D:E4:58:37:D2:05:61:25:5A:02:BB:C2:23:34:C1:F6:81:D0:1B:36:6F:E3:1B:EF:41:8B:AF:53:59:03:EF",
+        "F7:BA:97:8C:6E:DA:C0:FD:71:52:78:4F:35:8A:33:31:C2:76:53:F7:C2:21:BB:13:FF:9C:AD:83:AA:03:B8:E1"
+      ],
+      "regions": {
+        "TR": "blocked"
+      }
+    },
+    {
+      "id": "wikipedia",
+      "name": "Wikipedia",
+      "category": "knowledge",
+      "packages": [
+        "org.wikipedia"
+      ],
+      "play": "org.wikipedia",
+      "website": "https://www.wikipedia.org",
+      "download": {
+        "type": "fdroid"
+      },
+      "regions": {
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "tor",
+      "name": "Tor Browser",
+      "category": "browser",
+      "packages": [
+        "org.torproject.torbrowser"
+      ],
+      "play": "org.torproject.torbrowser",
+      "website": "https://www.torproject.org/download/",
+      "tool": true,
+      "download": {
+        "type": "template",
+        "url": "https://aus1.torproject.org/torbrowser/update_3/release/downloads.json",
+        "field": "version",
+        "template": "https://dist.torproject.org/torbrowser/{version}/tor-browser-android-{abi}-{version}.apk",
+        "abis": {
+          "arm64-v8a": "aarch64",
+          "armeabi-v7a": "armv7",
+          "x86_64": "x86_64"
+        }
+      },
+      "regions": {
+        "RU": "blocked",
+        "CN": "blocked"
+      }
+    },
+    {
+      "id": "psiphon",
+      "name": "Psiphon",
+      "category": "vpn",
+      "packages": [
+        "com.psiphon3",
+        "com.psiphon3.subscription"
+      ],
+      "play": "com.psiphon3.subscription",
+      "website": "https://psiphon.ca/en/download.html",
+      "tool": true,
+      "download": {
+        "type": "apk",
+        "url": "https://psiphon.ca/PsiphonAndroid.apk"
+      },
+      "regions": {}
+    },
+    {
+      "id": "protonvpn",
+      "name": "Proton VPN",
+      "category": "vpn",
+      "packages": [
+        "ch.protonvpn.android"
+      ],
+      "play": "ch.protonvpn.android",
+      "website": "https://protonvpn.com/download",
+      "tool": true,
+      "download": {
+        "type": "fdroid"
+      },
+      "regions": {}
+    },
+    {
+      "id": "aurora",
+      "name": "Aurora Store",
+      "category": "store",
+      "packages": [
+        "com.aurora.store"
+      ],
+      "website": "https://auroraoss.com",
+      "tool": true,
+      "download": {
+        "type": "fdroid"
+      },
+      "regions": {}
+    },
+    {
+      "id": "fdroid",
+      "name": "F-Droid",
+      "category": "store",
+      "packages": [
+        "org.fdroid.fdroid"
+      ],
+      "website": "https://f-droid.org",
+      "tool": true,
+      "download": {
+        "type": "apk",
+        "url": "https://f-droid.org/F-Droid.apk"
+      },
+      "regions": {}
+    }
+  ]
+}

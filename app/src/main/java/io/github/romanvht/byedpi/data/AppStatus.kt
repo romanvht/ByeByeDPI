@@ -15,10 +15,13 @@ enum class Mode {
             Sender.VPN -> VPN
         }
 
-        fun fromString(name: String): Mode = when (name) {
+        fun fromString(name: String): Mode =
+            fromStringOrNull(name) ?: throw IllegalArgumentException("Invalid mode: $name")
+
+        fun fromStringOrNull(name: String): Mode? = when (name) {
             "proxy" -> Proxy
             "vpn" -> VPN
-            else -> throw IllegalArgumentException("Invalid mode: $name")
+            else -> null
         }
     }
 }
