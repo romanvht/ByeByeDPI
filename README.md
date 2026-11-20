@@ -9,7 +9,7 @@
     <a href="README-tr.md">Türkçe</a>
   </p>
   <p>
-    <a href="https://github.com/metetv2021-cloud/ByeByeDPI/actions/workflows/build.yml"><img src="https://github.com/metetv2021-cloud/ByeByeDPI/actions/workflows/build.yml/badge.svg" alt="Build" /></a>
+    <a href="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml"><img src="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml/badge.svg" alt="Build" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="License: GPL-3.0" /></a>
   </p>
 </div>
@@ -65,7 +65,7 @@ You need JDK 17 or newer and the Android SDK with NDK 27.0.12077973 and CMake 3.
 1. Clone the repository with its submodules:
 
 ```bash
-git clone --recurse-submodules https://github.com/metetv2021-cloud/ByeByeDPI.git
+git clone --recurse-submodules https://github.com/Albert5718/Sidestep.git
 ```
 
 2. Build from the repository root:

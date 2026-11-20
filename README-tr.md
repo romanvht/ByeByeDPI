@@ -9,7 +9,7 @@
     Türkçe
   </p>
   <p>
-    <a href="https://github.com/metetv2021-cloud/ByeByeDPI/actions/workflows/build.yml"><img src="https://github.com/metetv2021-cloud/ByeByeDPI/actions/workflows/build.yml/badge.svg" alt="Derleme" /></a>
+    <a href="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml"><img src="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml/badge.svg" alt="Derleme" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="Lisans: GPL-3.0" /></a>
   </p>
 </div>
@@ -63,7 +63,7 @@ JDK 17 veya üstü ve NDK 27.0.12077973 ile CMake 3.22.1 içeren Android SDK ger
 1. Depoyu alt modülleriyle birlikte klonlayın:
 
 ```bash
-git clone --recurse-submodules https://github.com/metetv2021-cloud/ByeByeDPI.git
+git clone --recurse-submodules https://github.com/Albert5718/Sidestep.git
 ```
 
 2. Deponun kök dizininden derleyin:
