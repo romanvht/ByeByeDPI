@@ -9,6 +9,9 @@
     Türkçe
   </p>
   <p>
+    <a href="https://albert5718.github.io/Sidestep/?lang=tr"><b>Web sitesi</b></a>
+  </p>
+  <p>
     <a href="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml"><img src="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml/badge.svg" alt="Derleme" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="Lisans: GPL-3.0" /></a>
   </p>
@@ -81,6 +84,10 @@ Bu depoya yapılan her push GitHub Actions’ta da derlenir. Hata ayıklama APK�
 ### Engellenen uygulamalar listesini güncelleme
 
 Liste `app/src/main/assets/blocked_apps.json` dosyasındadır. Her uygulamada paket adları, resmî sitesi, isteğe bağlı bir indirme yolu (`apk`, `json`, `fdroid` veya `page`) ve engellendiği (`blocked`) ya da kısıtlandığı (`restricted`) ülkeler bulunur. Yalnızca Google Play’de olan uygulamalar `apkpure` indirmesini kullanır ve `signatures` gerektirir: geliştiricinin `https://<sitesi>/.well-known/assetlinks.json` dosyasında yayımladığı SHA-256 sertifika parmak izleri. Başka bir anahtarla imzalanmış yansı dosyası reddedilir. Düzenledikten sonra `updated` alanını bugünün tarihi yapın ve `master` dalına gönderin: biri **Listeyi güncelle**’ye dokunduğunda uygulama yeni listeyi alır. Güvenlik için indirmeler yalnızca `AppCatalogUtils.kt` içindeki `trustedHosts` sitelerinden yapılabilir; yeni bir indirme sitesi için uygulama güncellemesi gerekir.
+
+### Web sitesi
+
+Web sitesi, GitHub Pages ile yayımlanan tek sayfalık `docs/index.html` dosyasıdır (Settings → Pages → Deploy from a branch → `master`, `/docs` klasörü). İngilizce metinler sayfanın kendisinde, Rusça ve Türkçe metinler ise sayfanın sonundaki betiktedir.
 
 ### Çeviriler
 

@@ -9,6 +9,9 @@
     <a href="README-tr.md">Türkçe</a>
   </p>
   <p>
+    <a href="https://albert5718.github.io/Sidestep/"><b>Website</b></a>
+  </p>
+  <p>
     <a href="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml"><img src="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml/badge.svg" alt="Build" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="License: GPL-3.0" /></a>
   </p>
@@ -83,6 +86,10 @@ Every push to this repository is also built on GitHub Actions. You can download 
 ### Updating the blocked apps list
 
 The list is in `app/src/main/assets/blocked_apps.json`. Each app has its package names, its official site, an optional download (`apk`, `json`, `fdroid` or `page`) and the countries where it is `blocked` or `restricted`. Apps that are only on Google Play use the `apkpure` download, which needs `signatures`: the SHA-256 certificate fingerprints the developer publishes in `https://<their site>/.well-known/assetlinks.json`. A mirror file signed with any other key is rejected. After editing, change `updated` to today's date and push to the `master` branch: the app picks up the new list when someone taps **Update the list**. For safety, downloads may only come from the sites in `trustedHosts` in `AppCatalogUtils.kt`, so a new download site needs an app update.
+
+### Website
+
+The website is the single page `docs/index.html`, published with GitHub Pages (Settings → Pages → Deploy from a branch → `master`, folder `/docs`). The English texts are in the page itself; the Russian and Turkish texts are in the script at the end of the page.
 
 ### Translations
 

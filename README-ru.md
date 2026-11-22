@@ -9,6 +9,9 @@
     <a href="README-tr.md">Türkçe</a>
   </p>
   <p>
+    <a href="https://albert5718.github.io/Sidestep/?lang=ru"><b>Сайт</b></a>
+  </p>
+  <p>
     <a href="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml"><img src="https://github.com/Albert5718/Sidestep/actions/workflows/build.yml/badge.svg" alt="Сборка" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="Лицензия: GPL-3.0" /></a>
   </p>
@@ -83,6 +86,10 @@ git clone --recurse-submodules https://github.com/Albert5718/Sidestep.git
 ### Как обновлять список заблокированных приложений
 
 Список находится в `app/src/main/assets/blocked_apps.json`. Для каждого приложения указаны названия пакетов, официальный сайт, способ загрузки (`apk`, `json`, `fdroid` или `page`, необязательно) и страны, где оно заблокировано (`blocked`) или ограничено (`restricted`). Для приложений, которые есть только в Google Play, используется загрузка `apkpure`: ей нужны `signatures` — SHA-256-отпечатки сертификатов, которые разработчик публикует в `https://<его сайт>/.well-known/assetlinks.json`. Файл с зеркала, подписанный другим ключом, отклоняется. После правки поменяйте `updated` на сегодняшнюю дату и отправьте изменения в ветку `master`: приложение загрузит новый список, когда пользователь нажмёт **Обновить список**. Ради безопасности скачивать можно только с сайтов из `trustedHosts` в `AppCatalogUtils.kt`, поэтому новый сайт для загрузки требует обновления приложения.
+
+### Сайт
+
+Сайт — это одна страница `docs/index.html`, которая публикуется через GitHub Pages (Settings → Pages → Deploy from a branch → `master`, папка `/docs`). Английские тексты находятся в самой странице, а русские и турецкие — в скрипте в конце страницы.
 
 ### Переводы
 
