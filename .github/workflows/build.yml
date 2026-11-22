@@ -32,8 +32,23 @@ jobs:
           cache: gradle
 
       # NDK 27.0.12077973 is the default NDK of the Android Gradle Plugin this project uses.
+      # The download sometimes arrives broken ("Error reading Zip content"), so it is tried
+      # up to three times, removing the broken files in between.
       - name: Install NDK and CMake
-        run: (yes || true) | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.0.12077973" "cmake;3.22.1" > /dev/null
+        run: |
+          ndk="$ANDROID_HOME/ndk/27.0.12077973"
+          cmake="$ANDROID_HOME/cmake/3.22.1"
+          for attempt in 1 2 3; do
+            if (yes || true) | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.0.12077973" "cmake;3.22.1" > /dev/null \
+              && [ -x "$ndk/ndk-build" ] && [ -x "$cmake/bin/cmake" ]; then
+              exit 0
+            fi
+            echo "Installing the NDK and CMake failed (attempt $attempt of 3)"
+            rm -rf "$ndk" "$cmake" "$ANDROID_HOME/.temp"
+            sleep $((attempt * 15))
+          done
+          echo "::error::Could not install the NDK and CMake"
+          exit 1
 
       - name: Lint and unit tests
         run: ./gradlew lintDebug testDebugUnitTest

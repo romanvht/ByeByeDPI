@@ -7,9 +7,9 @@
     <string name="app_name" translatable="false">Sidestep</string>
     <string name="notification_title" translatable="false">@string/app_name</string>
     <string name="byedpi_docs" translatable="false">https://github.com/hufrea/byedpi/blob/main/README.md</string>
-    <string name="source_code_url" translatable="false">https://github.com/metetv2021-cloud/ByeByeDPI</string>
+    <string name="source_code_url" translatable="false">https://github.com/Albert5718/Sidestep</string>
     <!-- The list of blocked apps. "Update the list" downloads this file, so it must stay in the default branch. -->
-    <string name="catalog_url" translatable="false">https://raw.githubusercontent.com/metetv2021-cloud/ByeByeDPI/master/app/src/main/assets/blocked_apps.json</string>
+    <string name="catalog_url" translatable="false">https://raw.githubusercontent.com/Albert5718/Sidestep/master/app/src/main/assets/blocked_apps.json</string>
     <string name="proxy_address" translatable="false">%1$s:%2$s</string>
     <string name="test_result_count" translatable="false">%1$d/%2$d</string>
 
