@@ -8,12 +8,20 @@ name: Release
 #   3. Push to master, then open Actions → Release → Run workflow.
 #      Pushing a tag named after the version (for example v2.1.0) works too.
 #
+# "Dry run" builds and signs the APKs and keeps them as a run artifact without publishing
+# anything. It works from any branch, to try changes to this workflow.
+#
 # The APKs are signed with the key in two repository secrets (Settings → Secrets and variables → Actions):
 #   SIGNING_KEYSTORE  the PKCS12 keystore, base64-encoded
 #   SIGNING_PASSWORD  its password
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Dry run (build and sign, but publish nothing)
+        type: boolean
+        default: false
   push:
     tags:
       - "v*"
@@ -31,6 +39,9 @@ env:
   # nobody can update to. Change this only when moving to a new key on purpose.
   SIGNING_CERT_SHA256: 0cdde097e14e7f8bfed27c80197a7fe47c815580f288e4ede194ac753f1bf6f6
   KEY_ALIAS: sidestep
+  # The build tools that sign the APKs. Fixed, so signing works the same on every runner image.
+  BUILD_TOOLS: 36.0.0
+  DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
 
 jobs:
   release:
@@ -62,7 +73,7 @@ jobs:
               echo "::error::The tag $GITHUB_REF_NAME does not match the app version $name. Use the tag $tag, or change versionName."
               exit 1
             fi
-          else
+          elif [ "$DRY_RUN" != true ]; then
             if [ "$GITHUB_REF_NAME" != "$DEFAULT_BRANCH" ]; then
               echo "::error::Releases are made from the $DEFAULT_BRANCH branch. Run the workflow there."
               exit 1
@@ -74,11 +85,11 @@ jobs:
               exit 1
             fi
           fi
-          if gh release view "$tag" > /dev/null 2>&1; then
+          if [ "$DRY_RUN" != true ] && gh release view "$tag" > /dev/null 2>&1; then
             echo "::error::Release $tag already exists. Raise versionCode and versionName in app/build.gradle.kts for a new release."
             exit 1
           fi
-          echo "Releasing $tag (version code $code)"
+          echo "Releasing $tag (version code $code), dry run: $DRY_RUN"
           {
             echo "name=$name"
             echo "code=$code"
@@ -130,7 +141,11 @@ jobs:
           VERSION: ${{ steps.version.outputs.name }}
         run: |
           keystore="$RUNNER_TEMP/release.p12"
-          tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          tools="$ANDROID_HOME/build-tools/$BUILD_TOOLS"
+          if [ ! -x "$tools/apksigner" ]; then
+            (yes || true) | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "build-tools;$BUILD_TOOLS" > /dev/null
+          fi
+          echo "Signing with apksigner $("$tools/apksigner" --version) from build tools $BUILD_TOOLS"
           mkdir -p dist
           for apk in app/build/outputs/apk/release/app-*-release-unsigned.apk; do
             variant=$(basename "$apk" -release-unsigned.apk)
@@ -139,8 +154,15 @@ jobs:
             # v4 signatures go to separate .idsig files that only matter for adb installs
             "$tools/apksigner" sign --ks "$keystore" --ks-pass env:SIGNING_PASSWORD --ks-key-alias "$KEY_ALIAS" \
               --v4-signing-enabled false --out "$out" "$RUNNER_TEMP/aligned.apk"
-            signer=$("$tools/apksigner" verify --print-certs "$out" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')
-            if [ "$signer" != "$SIGNING_CERT_SHA256" ]; then
+            # Every signer of the APK must be the release certificate
+            if ! report=$("$tools/apksigner" verify --print-certs "$out" 2>&1); then
+              echo "$report"
+              echo "::error::$out does not verify"
+              exit 1
+            fi
+            signers=$(printf '%s\n' "$report" | sed -n 's/^Signer.* certificate SHA-256 digest: *//p' | sort -u)
+            if [ "$signers" != "$SIGNING_CERT_SHA256" ]; then
+              echo "$report"
               echo "::error::$out is not signed with the release key"
               exit 1
             fi
@@ -156,7 +178,16 @@ jobs:
           (cd dist && sha256sum ./*.apk | sed 's| \./| |' > SHA256SUMS.txt)
           cat dist/SHA256SUMS.txt
 
+      - name: Keep the APKs of the dry run
+        if: env.DRY_RUN == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sidestep-${{ steps.version.outputs.name }}-dry-run
+          path: dist/
+          if-no-files-found: error
+
       - name: Publish the release
+        if: env.DRY_RUN != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           NAME: ${{ steps.version.outputs.name }}
