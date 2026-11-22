@@ -1,0 +1,198 @@
+name: Release
+
+# Publishes a GitHub release with signed APKs of the version in app/build.gradle.kts.
+#
+# To make a release:
+#   1. Raise versionCode and versionName in app/build.gradle.kts.
+#   2. Describe the changes in fastlane/metadata/android/<language>/changelogs/<versionCode>.txt.
+#   3. Push to master, then open Actions → Release → Run workflow.
+#      Pushing a tag named after the version (for example v2.1.0) works too.
+#
+# The APKs are signed with the key in two repository secrets (Settings → Secrets and variables → Actions):
+#   SIGNING_KEYSTORE  the PKCS12 keystore, base64-encoded
+#   SIGNING_PASSWORD  its password
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  # Android installs an update only if it is signed with the same key as the installed app.
+  # A key with any other certificate is refused, so a wrong secret can't publish APKs that
+  # nobody can update to. Change this only when moving to a new key on purpose.
+  SIGNING_CERT_SHA256: 0cdde097e14e7f8bfed27c80197a7fe47c815580f288e4ede194ac753f1bf6f6
+  KEY_ALIAS: sidestep
+
+jobs:
+  release:
+    name: Build, sign and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out the code with submodules
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Check the version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          name=$(sed -n 's/^ *versionName = "\([^"]*\)"$/\1/p' app/build.gradle.kts)
+          code=$(sed -n 's/^ *versionCode = \([0-9][0-9]*\)$/\1/p' app/build.gradle.kts)
+          if [ -z "$name" ] || [ -z "$code" ]; then
+            echo "::error::Could not read versionName and versionCode from app/build.gradle.kts"
+            exit 1
+          fi
+          tag="v$name"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            if [ "$GITHUB_REF_NAME" != "$tag" ]; then
+              echo "::error::The tag $GITHUB_REF_NAME does not match the app version $name. Use the tag $tag, or change versionName."
+              exit 1
+            fi
+          else
+            if [ "$GITHUB_REF_NAME" != "$DEFAULT_BRANCH" ]; then
+              echo "::error::Releases are made from the $DEFAULT_BRANCH branch. Run the workflow there."
+              exit 1
+            fi
+            # A tag left by an earlier attempt must point to this commit
+            existing=$(git ls-remote origin "refs/tags/$tag" "refs/tags/$tag^{}" | tail -n 1 | cut -f 1)
+            if [ -n "$existing" ] && [ "$existing" != "$GITHUB_SHA" ]; then
+              echo "::error::The tag $tag already exists on another commit. Raise versionCode and versionName for a new release."
+              exit 1
+            fi
+          fi
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "::error::Release $tag already exists. Raise versionCode and versionName in app/build.gradle.kts for a new release."
+            exit 1
+          fi
+          echo "Releasing $tag (version code $code)"
+          {
+            echo "name=$name"
+            echo "code=$code"
+            echo "tag=$tag"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      # Checked before the build, so a missing or wrong key fails in seconds
+      - name: Check the signing key
+        env:
+          SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: |
+          if [ -z "$SIGNING_KEYSTORE" ] || [ -z "$SIGNING_PASSWORD" ]; then
+            echo "::error::The signing key is missing. Add the repository secrets SIGNING_KEYSTORE and SIGNING_PASSWORD (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          keystore="$RUNNER_TEMP/release.p12"
+          # Spaces and line breaks picked up while copying the secret are ignored
+          if ! printf '%s' "$SIGNING_KEYSTORE" | tr -d ' \t\r\n' | base64 -d > "$keystore" 2> /dev/null; then
+            echo "::error::The SIGNING_KEYSTORE secret is not valid base64."
+            exit 1
+          fi
+          if ! listing=$(keytool -list -v -storetype PKCS12 -keystore "$keystore" -storepass:env SIGNING_PASSWORD -alias "$KEY_ALIAS" 2>&1); then
+            echo "::error::Could not open the signing key. Check the SIGNING_KEYSTORE and SIGNING_PASSWORD secrets."
+            exit 1
+          fi
+          fingerprint=$(printf '%s\n' "$listing" | sed -n 's/^.*SHA256: *//p' | head -n 1 | tr -d ':' | tr 'A-F' 'a-f')
+          if [ "$fingerprint" != "$SIGNING_CERT_SHA256" ]; then
+            echo "::error::The key in SIGNING_KEYSTORE ($fingerprint) is not the Sidestep release key ($SIGNING_CERT_SHA256)."
+            exit 1
+          fi
+
+      - name: Install NDK and CMake
+        uses: ./.github/actions/install-ndk
+
+      - name: Build release APKs
+        run: ./gradlew assembleRelease
+
+      - name: Sign the APKs
+        env:
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          keystore="$RUNNER_TEMP/release.p12"
+          tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          mkdir -p dist
+          for apk in app/build/outputs/apk/release/app-*-release-unsigned.apk; do
+            variant=$(basename "$apk" -release-unsigned.apk)
+            out="dist/Sidestep-$VERSION-${variant#app-}.apk"
+            "$tools/zipalign" -f -P 16 4 "$apk" "$RUNNER_TEMP/aligned.apk"
+            # v4 signatures go to separate .idsig files that only matter for adb installs
+            "$tools/apksigner" sign --ks "$keystore" --ks-pass env:SIGNING_PASSWORD --ks-key-alias "$KEY_ALIAS" \
+              --v4-signing-enabled false --out "$out" "$RUNNER_TEMP/aligned.apk"
+            signer=$("$tools/apksigner" verify --print-certs "$out" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')
+            if [ "$signer" != "$SIGNING_CERT_SHA256" ]; then
+              echo "::error::$out is not signed with the release key"
+              exit 1
+            fi
+            echo "Signed $out"
+          done
+          rm -f "$keystore" "$RUNNER_TEMP/aligned.apk"
+          # One APK per processor type and a universal one
+          count=$(find dist -name '*.apk' | wc -l)
+          if [ "$count" -ne 5 ]; then
+            echo "::error::Expected 5 APKs, found $count"
+            exit 1
+          fi
+          (cd dist && sha256sum ./*.apk | sed 's| \./| |' > SHA256SUMS.txt)
+          cat dist/SHA256SUMS.txt
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NAME: ${{ steps.version.outputs.name }}
+          CODE: ${{ steps.version.outputs.code }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          notes="$RUNNER_TEMP/notes.md"
+          changelogs=fastlane/metadata/android
+          {
+            if [ -f "$changelogs/en-US/changelogs/$CODE.txt" ]; then
+              cat "$changelogs/en-US/changelogs/$CODE.txt"
+              echo
+            fi
+            sed -e "s/@VERSION@/$NAME/g" -e "s/@CERT@/$SIGNING_CERT_SHA256/g" <<'NOTES'
+          ### Which file do I need?
+
+          - **Sidestep-@VERSION@-universal.apk** works on every device. Take it if you are not sure.
+          - **arm64-v8a**: most phones and TV boxes from recent years.
+          - **armeabi-v7a**: older and low-cost phones and TV boxes.
+          - **x86_64** and **x86**: emulators and some Chromebooks.
+
+          Download the file on your device and open it. Android may ask you to allow installing apps from your browser or file manager.
+
+          The APKs are signed with the Sidestep release key, whose certificate has the SHA-256 fingerprint `@CERT@`. `SHA256SUMS.txt` lists the checksums of the files.
+          NOTES
+            for language in ru-RU:Русский tr-TR:Türkçe; do
+              file="$changelogs/${language%%:*}/changelogs/$CODE.txt"
+              if [ -f "$file" ]; then
+                printf '\n<details><summary>%s</summary>\n\n' "${language#*:}"
+                cat "$file"
+                printf '\n</details>\n'
+              fi
+            done
+          } > "$notes"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            gh release create "$TAG" dist/* --verify-tag --title "Sidestep $NAME" --notes-file "$notes"
+          else
+            gh release create "$TAG" dist/* --target "$GITHUB_SHA" --title "Sidestep $NAME" --notes-file "$notes"
+          fi

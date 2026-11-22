@@ -9,6 +9,7 @@
     <a href="README-tr.md">Türkçe</a>
   </p>
   <p>
+    <a href="https://github.com/Albert5718/Sidestep/releases/latest"><b>Download</b></a> ·
     <a href="https://albert5718.github.io/Sidestep/"><b>Website</b></a>
   </p>
   <p>
@@ -47,7 +48,7 @@ Sidestep is a redesigned fork of [ByeByeDPI](https://github.com/romanvht/ByeByeD
 
 ### Getting started
 
-1. Install the app and open it. The welcome screen lets you pick a language.
+1. Install the app from the [latest release](https://github.com/Albert5718/Sidestep/releases/latest) and open it. The welcome screen lets you pick a language.
 2. Tap **Connect** and allow the VPN request. Android shows it only the first time.
 3. If some sites still don't open, go to **Find a working strategy** and tap **Start test**. When it finishes, tap **Apply** on the strategy at the top.
 
@@ -82,6 +83,14 @@ git clone --recurse-submodules https://github.com/Albert5718/Sidestep.git
 `./gradlew assembleRelease` builds smaller, optimized APKs. They are unsigned; sign them with your own key using `apksigner`.
 
 Every push to this repository is also built on GitHub Actions. You can download the debug APKs from the run's **Artifacts** section.
+
+### Publishing a release
+
+1. Raise `versionCode` and `versionName` in `app/build.gradle.kts`.
+2. Describe the changes in `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`, and in `ru-RU` and `tr-TR` too if you can.
+3. Push to `master`, then open **Actions → Release → Run workflow**.
+
+The workflow builds the APKs, signs them with the release key and publishes them as a GitHub release, with the changelog as its notes. The key is kept in the repository secrets `SIGNING_KEYSTORE` (the PKCS12 keystore, base64-encoded) and `SIGNING_PASSWORD`. Keep a copy of the keystore and its password somewhere safe: Android installs an update only if it is signed with the same key, so without them nobody could update to a new version.
 
 ### Updating the blocked apps list
 

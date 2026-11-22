@@ -9,6 +9,7 @@
     Türkçe
   </p>
   <p>
+    <a href="https://github.com/Albert5718/Sidestep/releases/latest"><b>İndir</b></a> ·
     <a href="https://albert5718.github.io/Sidestep/?lang=tr"><b>Web sitesi</b></a>
   </p>
   <p>
@@ -47,7 +48,7 @@ Sidestep, romanvht’nin geliştirdiği [ByeByeDPI](https://github.com/romanvht/
 
 ### Başlarken
 
-1. Uygulamayı yükleyin ve açın. Karşılama ekranında dili seçebilirsiniz.
+1. Uygulamayı [son sürümden](https://github.com/Albert5718/Sidestep/releases/latest) yükleyin ve açın. Karşılama ekranında dili seçebilirsiniz.
 2. **Bağlan**’a dokunun ve VPN isteğine izin verin. Android bunu yalnızca ilk seferde sorar.
 3. Bazı siteler hâlâ açılmıyorsa **Çalışan strateji bul**’a gidin ve **Testi başlat**’a dokunun. Test bitince listenin en üstündeki stratejide **Uygula**’ya dokunun.
 
@@ -80,6 +81,14 @@ git clone --recurse-submodules https://github.com/Albert5718/Sidestep.git
 `./gradlew assembleRelease` daha küçük ve optimize edilmiş APK’lar derler. Bunlar imzasızdır; `apksigner` ile kendi anahtarınızla imzalayın.
 
 Bu depoya yapılan her push GitHub Actions’ta da derlenir. Hata ayıklama APK’larını ilgili çalıştırmanın **Artifacts** bölümünden indirebilirsiniz.
+
+### Sürüm yayımlama
+
+1. `app/build.gradle.kts` içindeki `versionCode` ve `versionName` değerlerini artırın.
+2. Değişiklikleri `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt` dosyasına, mümkünse `ru-RU` ve `tr-TR` için de yazın.
+3. `master` dalına gönderin, ardından **Actions → Release → Run workflow** yolunu açın.
+
+İş akışı APK’ları derler, sürüm anahtarıyla imzalar ve değişiklik listesini açıklama olarak kullanarak bir GitHub sürümü yayımlar. Anahtar, depo gizli değerleri `SIGNING_KEYSTORE` (base64 ile kodlanmış PKCS12 anahtar deposu) ve `SIGNING_PASSWORD` içinde tutulur. Anahtar deposunun ve parolasının bir kopyasını güvenli bir yerde saklayın: Android bir güncellemeyi yalnızca aynı anahtarla imzalanmışsa yükler; bunlar olmadan kimse yeni sürüme güncelleyemez.
 
 ### Engellenen uygulamalar listesini güncelleme
 
