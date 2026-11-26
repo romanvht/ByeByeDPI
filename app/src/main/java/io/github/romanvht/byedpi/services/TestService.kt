@@ -277,11 +277,11 @@ class TestService : Service() {
                         requestTimeout = settings.requestTimeout,
                         concurrentRequests = settings.requestLimit,
                         fullLog = true,
-                        onSiteChecked = { site, successCount, countRequests ->
+                        onSiteChecked = { result ->
                             withContext(Dispatchers.Main.immediate) {
-                                strategy.currentProgress += countRequests
-                                strategy.successCount += successCount
-                                strategy.siteResults.add(SiteResult(site, successCount, countRequests))
+                                strategy.currentProgress += result.totalCount
+                                strategy.successCount += result.successCount
+                                strategy.siteResults.add(result)
                                 publish(strategies)
                             }
                         }

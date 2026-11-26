@@ -1,6 +1,8 @@
 package io.github.romanvht.byedpi.utility
 
 import android.util.Log
+import io.github.romanvht.byedpi.data.SiteResult
+import io.github.romanvht.byedpi.data.median
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -14,6 +16,9 @@ import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
 import kotlin.coroutines.coroutineContext
 
 class SiteCheckUtils(
@@ -27,19 +32,22 @@ class SiteCheckUtils(
         requestTimeout: Long,
         concurrentRequests: Int = 20,
         fullLog: Boolean,
-        onSiteChecked: (suspend (String, Int, Int) -> Unit)? = null
-    ): List<Pair<String, Int>> {
+        onSiteChecked: (suspend (SiteResult) -> Unit)? = null
+    ): List<SiteResult> {
         val semaphore = Semaphore(concurrentRequests)
         return withContext(Dispatchers.IO) {
+            // Own TLS session cache for each check. With the shared one, the next strategy
+            // would resume sessions saved by the previous one and look faster than it is
+            val sslSocketFactory = SSLContext.getInstance("TLS").apply { init(null, null, null) }.socketFactory
             sites.map { site ->
                 async {
                     semaphore.withPermit {
-                        val successCount = checkSiteAccess(site, requestsCount, requestTimeout)
+                        val result = checkSiteAccess(site, requestsCount, requestTimeout, sslSocketFactory)
                         coroutineContext.ensureActive()
                         if (fullLog) {
-                            onSiteChecked?.invoke(site, successCount, requestsCount)
+                            onSiteChecked?.invoke(result)
                         }
-                        site to successCount
+                        result
                     }
                 }
             }.awaitAll()
@@ -49,9 +57,11 @@ class SiteCheckUtils(
     private suspend fun checkSiteAccess(
         site: String,
         requestsCount: Int,
-        timeout: Long
-    ): Int = withContext(Dispatchers.IO) {
+        timeout: Long,
+        sslSocketFactory: SSLSocketFactory
+    ): SiteResult = withContext(Dispatchers.IO) {
         var responseCount = 0
+        val responseTimes = mutableListOf<Long>()
 
         val formattedUrl = if (site.startsWith("http://") || site.startsWith("https://")) site
         else "https://$site"
@@ -60,7 +70,7 @@ class SiteCheckUtils(
             URL(formattedUrl)
         } catch (_: Exception) {
             Log.e("SiteChecker", "Invalid URL: $formattedUrl")
-            return@withContext 0
+            return@withContext SiteResult(site, 0, requestsCount)
         }
 
         val proxy = Proxy(Proxy.Type.SOCKS, InetSocketAddress(proxyIp, proxyPort))
@@ -70,8 +80,12 @@ class SiteCheckUtils(
             Log.i("SiteChecker", "Attempt ${attempt + 1}/$requestsCount for $site")
 
             var connection: HttpURLConnection? = null
+            val startTime = System.nanoTime()
             try {
                 connection = url.openConnection(proxy) as HttpURLConnection
+                if (connection is HttpsURLConnection) {
+                    connection.sslSocketFactory = sslSocketFactory
+                }
                 connection.connectTimeout = (timeout * 1000).toInt()
                 connection.readTimeout = (timeout * 1000).toInt()
                 connection.instanceFollowRedirects = true
@@ -107,7 +121,9 @@ class SiteCheckUtils(
                 }
 
                 if (declaredLength <= 0L || actualLength >= declaredLength) {
-                    Log.i("SiteChecker", "Response for $site: $responseCode, Declared: $declaredLength, Actual: $actualLength")
+                    val responseTime = (System.nanoTime() - startTime) / 1_000_000
+                    Log.i("SiteChecker", "Response for $site: $responseCode, Declared: $declaredLength, Actual: $actualLength, Time: $responseTime ms")
+                    responseTimes.add(responseTime)
                     responseCount++
                 } else {
                     Log.w("SiteChecker", "Block detected for $site, Declared: $declaredLength, Actual: $actualLength")
@@ -122,6 +138,6 @@ class SiteCheckUtils(
             }
         }
 
-        responseCount
+        SiteResult(site, responseCount, requestsCount, responseTimes.median())
     }
 }
