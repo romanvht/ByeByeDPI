@@ -38,13 +38,15 @@ class TestService : Service() {
         private const val CHANNEL = "Proxy test"
         private const val RESULTS_FILE = "proxy_test_results.json"
         private const val NOTIFICATION_ID = 4
+        private const val EXTRA_COMMANDS = "test_commands"
+        private const val EXTRA_APPEND_RESULTS = "test_append_results"
         private val mutableState = MutableStateFlow(TestState())
         private val resultsLock = Any()
         val state: StateFlow<TestState> = mutableState.asStateFlow()
         val isRunning: Boolean
             get() = state.value.isRunning
 
-        fun start(context: Context) {
+        fun start(context: Context, commands: List<String>? = null, appendResults: Boolean = false) {
             if (isRunning) return
             ServiceManager.refresh(context)
             val previous = state.value
@@ -57,7 +59,14 @@ class TestService : Service() {
                 wasInterrupted = false,
             )
             try {
-                ContextCompat.startForegroundService(context, Intent(context, TestService::class.java).setAction(START_ACTION))
+                val intent = Intent(context, TestService::class.java).setAction(START_ACTION)
+                if (commands != null) {
+                    intent.putStringArrayListExtra(EXTRA_COMMANDS, ArrayList(commands))
+                }
+                if (appendResults) {
+                    intent.putExtra(EXTRA_APPEND_RESULTS, true)
+                }
+                ContextCompat.startForegroundService(context, intent)
             } catch (e: Exception) {
                 mutableState.value = previous.copy(failed = true)
                 Log.e(TAG, "Failed to start proxy tests", e)
@@ -111,6 +120,7 @@ class TestService : Service() {
     private var destroyed = false
     private var notifiedStrategy = -1
     private var notifiedCompleted = -1
+    private var carriedStrategies: List<StrategyResult> = emptyList()
 
     override fun onCreate() {
         super.onCreate()
@@ -130,7 +140,10 @@ class TestService : Service() {
                         stopForeground(true)
                         stopSelfResult(startId)
                     } else if (testJob == null) {
-                        startTesting()
+                        startTesting(
+                            intent?.getStringArrayListExtra(EXTRA_COMMANDS),
+                            intent?.getBooleanExtra(EXTRA_APPEND_RESULTS, false) == true,
+                        )
                     }
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to show proxy test notification", e)
@@ -158,8 +171,9 @@ class TestService : Service() {
         super.onDestroy()
     }
 
-    private fun startTesting() {
+    private fun startTesting(commands: List<String>?, appendResults: Boolean) {
         val previous = state.value.copy(isRunning = false, isStopping = false)
+        carriedStrategies = emptyList()
         testJob = scope.launch(start = CoroutineStart.LAZY) {
             val testingJob = coroutineContext.job
             var settings: TestSettings? = null
@@ -180,13 +194,16 @@ class TestService : Service() {
                 if (state.value.isStopping) {
                     throw CancellationException("Proxy test stopped")
                 }
-                val options = withContext(Dispatchers.IO) { loadSettings() }
+                val options = withContext(Dispatchers.IO) { loadSettings(commands) }
                 settings = options
                 if (options.sites.isEmpty()) {
                     Toast.makeText(this@TestService, R.string.test_settings_domain_empty, Toast.LENGTH_LONG).show()
                     return@launch
                 }
                 strategies.addAll(options.commands.map { StrategyResult(command = it) })
+                if (appendResults) {
+                    carriedStrategies = previous.strategies.filter { it.command !in options.commands }
+                }
                 prepared = true
                 getPreferences().edit(commit = true) { putBoolean("is_test_running", true) }
                 publish(strategies, 0)
@@ -208,7 +225,7 @@ class TestService : Service() {
                     }
                     strategy.isCompleted = true
                     publish(strategies)
-                    saveResults(strategies)
+                    saveResults(strategies + carriedStrategies)
                     stopEngine()
                     currentStrategy = null
                     delay(options.delaySec * 500L)
@@ -231,7 +248,7 @@ class TestService : Service() {
                     stopEngine()
                     if (prepared) {
                         try {
-                            saveResults(strategies)
+                            saveResults(strategies + carriedStrategies)
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to save proxy test results", e)
                             failed = true
@@ -242,12 +259,14 @@ class TestService : Service() {
                     @Suppress("DEPRECATION")
                     stopForeground(true)
                     stopSelfResult(lastStartId)
+                    val results = if (prepared) snapshot(strategies + carriedStrategies) else emptyList()
+                    carriedStrategies = emptyList()
                     mutableState.value = if (prepared) TestState(
                         runId = previous.runId,
                         isLoaded = true,
-                        strategies = snapshot(strategies),
+                        strategies = results,
                         failed = failed,
-                    ) else previous.copy(failed = failed)
+                    ) else previous.copy(failed = failed, carriedStrategies = emptyList())
                 }
             }
         }
@@ -333,12 +352,16 @@ class TestService : Service() {
         }
     }
 
-    private fun loadSettings(): TestSettings {
+    private fun loadSettings(testCommands: List<String>?): TestSettings {
         val prefs = getPreferences()
-        val userCommands = prefs.getBoolean("byedpi_proxytest_usercommands", false)
         val sniValue = prefs.getStringNotNull("byedpi_proxytest_sni", "google.com")
-        val content = if (userCommands) prefs.getStringNotNull("byedpi_proxytest_commands", "")
-        else assets.open("proxytest_strategies.list").bufferedReader().use { it.readText() }
+        val content = if (testCommands != null) {
+            testCommands.joinToString("\n")
+        } else {
+            val userCommands = prefs.getBoolean("byedpi_proxytest_usercommands", false)
+            if (userCommands) prefs.getStringNotNull("byedpi_proxytest_commands", "")
+            else assets.open("proxytest_strategies.list").bufferedReader().use { it.readText() }
+        }
         val commands = content.replace("{sni}", "\"${sniValue}\"").lines().map { it.trim() }.filter { it.isNotEmpty() }
         val host = prefs.getStringNotNull("byedpi_proxy_ip", "127.0.0.1")
         val port = prefs.getIntStringNotNull("byedpi_proxy_port", 1080)
@@ -379,7 +402,12 @@ class TestService : Service() {
     }
 
     private fun publish(strategies: List<StrategyResult>, currentStrategy: Int = state.value.currentStrategy) {
-        mutableState.value = state.value.copy(isLoaded = true, strategies = snapshot(strategies), currentStrategy = currentStrategy)
+        mutableState.value = state.value.copy(
+            isLoaded = true,
+            strategies = snapshot(strategies),
+            carriedStrategies = carriedStrategies,
+            currentStrategy = currentStrategy,
+        )
         val completed = strategies.count { it.isCompleted }
         if (!destroyed && (notifiedStrategy != currentStrategy || notifiedCompleted != completed)) {
             (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).notify(NOTIFICATION_ID, notification())

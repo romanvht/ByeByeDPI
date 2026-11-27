@@ -16,10 +16,4 @@
         android:layout="@layout/cmd_editor_buttons"
         android:selectable="false" />
 
-    <Preference
-        android:key="cmd_history_header"
-        android:title="@string/cmd_history_title"
-        android:summary="@string/cmd_history_title_summary"
-        android:layout="@layout/history_category" />
-
 </PreferenceScreen>
